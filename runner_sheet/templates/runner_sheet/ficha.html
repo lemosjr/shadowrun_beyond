@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Runner Assistant // {{ personagem.codinome }}</title>
+    <style>
+        /* --- ESTÉTICA CYBERPUNK GLOBAL --- */
+        :root {
+            --neon-pink: #ff00ff;
+            --neon-cyan: #00ffff;
+            --bg-dark: #0a0a0a;
+            --panel-bg: #1a1a1a;
+            --text-main: #eee;
+            --border-dim: #333;
+        }
+        
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Courier New', Courier, monospace; /* Fonte Hacker */
+            margin: 0;
+            padding: 20px;
+            padding-bottom: 200px; /* Espaço para o console não cobrir conteúdo */
+        }
+
+        h1, h2, h3 { text-transform: uppercase; margin: 0; }
+        
+        /* HEADER */
+        .header-runner {
+            border-bottom: 2px solid var(--neon-pink);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: end;
+        }
+
+        .codinome { font-size: 2em; color: var(--neon-cyan); text-shadow: 0 0 5px var(--neon-cyan); font-weight: bold; }
+        .realname { font-size: 0.9em; color: #666; margin-top: 5px; }
+        .metatipo { color: #888; border: 1px solid #444; padding: 2px 8px; font-size: 0.8em; }
+
+        /* MONITORES DE DANO (Vida) */
+        .monitor-section {
+            background: var(--panel-bg);
+            padding: 15px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border-dim);
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        .monitor-label {
+            font-size: 0.8em;
+            color: #aaa;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-limpar {
+            cursor: pointer;
+            color: #555;
+            transition: 0.2s;
+        }
+        .btn-limpar:hover { color: var(--text-main); }
+
+        .track-container {
+            display: flex;
+            gap: 5px; /* Espaço entre quadradinhos */
+            flex-wrap: wrap; /* Quebra linha no celular se precisar */
+        }
+
+        .dano-box {
+            width: 25px;
+            height: 25px;
+            border: 1px solid #444;
+            background: #111;
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+
+        .dano-box:hover { border-color: #fff; transform: scale(1.1); }
+
+        /* Estilos de Preenchimento */
+        .box-fisico.filled {
+            background-color: #ff3333; /* Vermelho */
+            box-shadow: 0 0 8px #ff3333;
+            border-color: #ff3333;
+        }
+
+        .box-stun.filled {
+            background-color: #3333ff; /* Azul */
+            box-shadow: 0 0 8px #3333ff;
+            border-color: #3333ff;
+        }
+
+        /* GRID DE ATRIBUTOS */
+        .atributos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .attr-box {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-dim);
+            padding: 10px;
+            text-align: center;
+        }
+        
+        .attr-val { font-size: 1.8em; font-weight: bold; color: var(--neon-pink); }
+        .attr-label { font-size: 0.7em; color: #888; margin-top: 5px; }
+
+        /* LISTA DE PERÍCIAS */
+        .section-title { 
+            color: var(--neon-cyan); 
+            border-bottom: 1px solid #333; 
+            padding-bottom: 5px; 
+            margin-bottom: 15px;
+        }
+
+        .pericia-item {
+            background: var(--panel-bg);
+            margin-bottom: 6px;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid transparent;
+            transition: 0.2s;
+        }
+
+        .pericia-item:hover {
+            border-left-color: var(--neon-cyan);
+            background: #222;
+        }
+
+        .btn-roll {
+            background: transparent;
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            padding: 8px 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-roll:hover {
+            background: var(--neon-cyan);
+            color: var(--bg-dark);
+            box-shadow: 0 0 15px var(--neon-cyan);
+        }
+
+        /* CONSOLE LOG (Terminal Fixo) */
+        #console-log {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 180px;
+            background: rgba(10, 10, 10, 0.95);
+            border-top: 2px solid var(--neon-pink);
+            padding: 15px;
+            overflow-y: auto;
+            font-size: 0.9em;
+            font-family: 'Courier New', Courier, monospace;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.8);
+            z-index: 100;
+        }
+
+        .log-entry { margin-bottom: 8px; border-bottom: 1px solid #222; padding-bottom: 8px;}
+        .log-success { color: #0f0; font-weight: bold; }
+        .log-fail { color: #f00; font-weight: bold; }
+        .dice-results { color: #666; font-size: 0.8em; margin-top: 3px;}
+        
+        /* Scrollbar customizada para ficar dark */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #111; }
+        ::-webkit-scrollbar-thumb { background: #333; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+    </style>
+</head>
+<body>
+
+    <div class="header-runner">
+        <div>
+            <div class="codinome">{{ personagem.codinome }}</div>
+            <div class="realname">{{ personagem.nome }}</div>
+        </div>
+        <div class="metatipo">{{ personagem.get_metatipo_display }}</div>
+    </div>
+
+    <div class="monitor-section">
+        <div class="monitor-label">
+            <span>MONITOR FÍSICO (Dano Letal)</span>
+            <span class="btn-limpar" onclick="setDano('fisico', 0)">[RESETAR]</span>
+        </div>
+        <div class="track-container" id="track-fisico">
+            {% with ''|center:12 as range %}
+            {% for _ in range %}
+                <div class="dano-box box-fisico" 
+                     data-index="{{ forloop.counter }}" 
+                     onclick="setDano('fisico', {{ forloop.counter }})">
+                </div>
+            {% endfor %}
+            {% endwith %}
+        </div>
+
+        <br>
+
+        <div class="monitor-label">
+            <span>MONITOR ATORDOAMENTO (Stun)</span>
+            <span class="btn-limpar" onclick="setDano('stun', 0)">[RESETAR]</span>
+        </div>
+        <div class="track-container" id="track-stun">
+            {% with ''|center:12 as range %}
+            {% for _ in range %}
+                <div class="dano-box box-stun" 
+                     data-index="{{ forloop.counter }}" 
+                     onclick="setDano('stun', {{ forloop.counter }})">
+                </div>
+            {% endfor %}
+            {% endwith %}
+        </div>
+    </div>
+
+    <div class="atributos-grid">
+        {% for attr in personagem.atributos.all %}
+        <div class="attr-box">
+            <div class="attr-val">{{ attr.valor }}</div>
+            <div class="attr-label">{{ attr.nome }}</div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <h3 class="section-title">Programas & Perícias Ativas</h3>
+    <div id="pericias-list">
+        {% for pericia in personagem.pericias.all %}
+        <div class="pericia-item">
+            <div>
+                <strong style="font-size: 1.1em;">{{ pericia.nome }}</strong> 
+                <span style="color:#555; margin-left: 5px;">[{{ pericia.atributo_base }}]</span>
+            </div>
+            <button class="btn-roll" onclick="rolarDados({{ pericia.id }})">
+                EXECUTAR
+            </button>
+        </div>
+        {% empty %}
+        <div style="color: #666; font-style: italic; padding: 20px;">
+            Nenhuma perícia instalada neste Cyberdeck.
+        </div>
+        {% endfor %}
+    </div>
+
+    <div id="console-log">
+        <div style="color: var(--neon-pink)">>> SINCRONIZAÇÃO NEURAL: OK</div>
+        <div style="color: var(--neon-cyan)">>> CONECTADO AO PERSONAGEM ID: {{ personagem.id }}</div>
+        <div style="color: #666">>> AGUARDANDO COMANDO DE DADOS...</div>
+        <br>
+    </div>
+
+    <script>
+        // --- 1. LÓGICA DE DANO (MONITORES) ---
+        // Pegamos os valores iniciais do Django
+        let danoFisicoAtual = {{ personagem.dano_fisico }};
+        let danoStunAtual = {{ personagem.dano_atordoamento }};
+        const personagemId = {{ personagem.id }};
+
+        // Função que pinta as caixinhas
+        function renderizarDano() {
+            // Físico
+            document.querySelectorAll('.box-fisico').forEach(box => {
+                const idx = parseInt(box.dataset.index);
+                if (idx <= danoFisicoAtual) box.classList.add('filled');
+                else box.classList.remove('filled');
+            });
+            // Stun
+            document.querySelectorAll('.box-stun').forEach(box => {
+                const idx = parseInt(box.dataset.index);
+                if (idx <= danoStunAtual) box.classList.add('filled');
+                else box.classList.remove('filled');
+            });
+        }
+
+        // Função chamada ao clicar nas caixinhas
+        async function setDano(tipo, valor) {
+            // Atualiza visualmente instantaneamente (Feedback UX)
+            if (tipo === 'fisico') danoFisicoAtual = valor;
+            if (tipo === 'stun') danoStunAtual = valor;
+            renderizarDano();
+
+            // Envia para o servidor silenciosamente
+            try {
+                await fetch(`/runner/api/dano/${personagemId}/${tipo}/${valor}/`);
+                console.log(`Dano ${tipo} atualizado para ${valor}`);
+            } catch (error) {
+                console.error("Falha ao salvar dano:", error);
+                logNoConsole("ERRO DE SINCRONIA: Dano não salvo no servidor!", true);
+            }
+        }
+
+        // Renderiza assim que carrega
+        renderizarDano();
+
+
+        // --- 2. LÓGICA DE DADOS (ROLAGEM) ---
+        async function rolarDados(periciaId) {
+            const consoleDiv = document.getElementById('console-log');
+            
+            // Mensagem de "Carregando"
+            logNoConsole(">> Iniciando sub-rotina de dados...", false, "#666");
+
+            try {
+                const response = await fetch(`/runner/api/rolar/${periciaId}/`);
+                
+                if (!response.ok) throw new Error("Erro na API");
+                
+                const data = await response.json();
+
+                // Define cor baseada no resultado
+                let classeResultado = data.hits > 0 ? 'log-success' : 'log-fail';
+                if (data.glitch) classeResultado = 'log-fail';
+
+                // HTML do Log
+                const html = `
+                    <div class="log-entry">
+                        <div>
+                            <strong>${data.teste}</strong>: 
+                            <span class="${classeResultado}">HITS: ${data.hits} (${data.mensagem})</span>
+                        </div>
+                        <div class="dice-results">[Pool: ${data.pool_total}] :: [${data.resultados.join(', ')}]</div>
+                    </div>
+                `;
+                
+                consoleDiv.innerHTML += html;
+                consoleDiv.scrollTop = consoleDiv.scrollHeight; // Auto-scroll para baixo
+
+            } catch (error) {
+                console.error(error);
+                logNoConsole(">> FATAL ERROR: Falha na conexão com Matrix.", true);
+            }
+        }
+
+        // Helper para escrever texto simples no log
+        function logNoConsole(msg, isError, color=null) {
+            const consoleDiv = document.getElementById('console-log');
+            let style = color ? `style="color:${color}"` : '';
+            if (isError) style = `style="color:#f00; font-weight:bold"`;
+            
+            consoleDiv.innerHTML += `<div ${style}>${msg}</div>`;
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        }
+    </script>
+</body>
+</html>
