@@ -1,7 +1,13 @@
 from django.contrib import admin
-from django.urls import path, include # <--- Importe o include
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('runner/', include('runner_sheet.urls')), # <--- Adicione isso
+    path('runner/', include('runner_sheet.urls')),
 ]
+
+# Isso permite ver as imagens de upload durante o desenvolvimento
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

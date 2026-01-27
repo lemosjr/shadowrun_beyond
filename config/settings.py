@@ -117,3 +117,11 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# Configuração do Whitenoise (Para o CSS não sumir na apresentação)
+if not DEBUG:
+    STATIC_ROOT = BASE_DIR / 'staticfiles'
+    STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"

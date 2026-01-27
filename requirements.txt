@@ -1,0 +1,8 @@
+# Framework Web
+Django
+
+# Banco de Dados
+Pillow
+
+# Static Files
+whitenoise
