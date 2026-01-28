@@ -12,6 +12,8 @@ class Personagem(models.Model):
     nome = models.CharField(max_length=100)
     codinome = models.CharField(max_length=50, blank=True, help_text="Nome de rua (Ex: 'Street Samurai')")
     metatipo = models.CharField(max_length=20, choices=METATIPOS, default='Humano')
+
+    foto = models.ImageField(upload_to='runners_avatars/', blank=True, null=True)
     
     # Monitores de Condição (Dano)
     dano_fisico = models.IntegerField(default=0, help_text="Dano Físico atual")
@@ -64,3 +66,15 @@ class Pericia(models.Model):
             return self.valor + attr.valor
         except Atributo.DoesNotExist:
             return self.valor # Fallback se não achar o atributo
+        
+class Arma(models.Model):
+    personagem = models.ForeignKey(Personagem, related_name='armas', on_delete=models.CASCADE)
+    nome = models.CharField(max_length=100, help_text="Ex: Ares Predator V")
+    dano = models.CharField(max_length=10, help_text="Ex: 8P")
+    ap = models.IntegerField(default=0, help_text="Penetração de Armadura (Ex: -1)")
+    
+    # O Pulo do Gato: A arma sabe qual perícia usar
+    pericia_associada = models.ForeignKey(Pericia, on_delete=models.CASCADE, help_text="Qual perícia essa arma usa?")
+
+    def __str__(self):
+        return f"{self.nome} ({self.dano})"
