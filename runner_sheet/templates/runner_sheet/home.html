@@ -12,6 +12,10 @@
     <div class="home-container">
         <h1 class="home-title">>> SELECIONE O OPERATIVO</h1>
         
+        <div style="margin-bottom: 20px;">
+            <a href="{% url 'criar_personagem' %}" class="btn-roll" style="text-decoration:none;">+ NOVO RUNNER</a>
+        </div>
+
         <div class="runners-grid">
             {% for runner in runners %}
             <a href="{% url 'ficha_detalhe' runner.id %}" class="runner-card">

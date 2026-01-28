@@ -1,8 +1,28 @@
 import random
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
-from .models import Personagem, Pericia
 
+from runner_sheet.forms import PersonagemForm
+from .models import Atributo, Personagem, Pericia
+
+
+def criar_personagem(request):
+    if request.method == 'POST':
+        form = PersonagemForm(request.POST, request.FILES)
+        if form.is_valid():
+            personagem = form.save()
+            
+            # --- MAGIA: Cria os atributos padrão automaticamente ---
+            atributos_padrao = ['Corpo', 'Agilidade', 'Reação', 'Força', 'Vontade', 'Lógica', 'Intuição', 'Carisma']
+            for nome_attr in atributos_padrao:
+                Atributo.objects.create(personagem=personagem, nome=nome_attr, valor=1)
+            
+            # Redireciona para a ficha recém criada
+            return redirect('ficha_detalhe', pk=personagem.pk)
+    else:
+        form = PersonagemForm()
+    
+    return render(request, 'runner_sheet/cadastro.html', {'form': form})
 # --- LÓGICA PURA (HELPER) ---
 # Esta função não é uma "view", é apenas uma calculadora interna
 def _rolar_dados_shadowrun(pool):
@@ -48,6 +68,22 @@ def _rolar_dados_shadowrun(pool):
         'glitch': glitch,
         'mensagem': mensagem
     }
+
+def api_rolar_atributo(request, atributo_id):
+    """Rola dados baseados apenas no valor do atributo"""
+    atributo = get_object_or_404(Atributo, pk=atributo_id)
+    
+    # Pool é apenas o valor do atributo
+    pool = atributo.valor
+    
+    # Usa a mesma calculadora de antes
+    resultado = _rolar_dados_shadowrun(pool)
+    
+    return JsonResponse({
+        'personagem': atributo.personagem.nome,
+        'teste': f"Teste de {atributo.nome}",
+        **resultado
+    })
 
 # --- VIEWS (INTERFACE) ---
 
