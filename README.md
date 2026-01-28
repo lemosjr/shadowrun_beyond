@@ -1,6 +1,3 @@
----
-
-```markdown
 # 🌆 SHADOWRUN BEYOND // Runner Sheet Manager
 
 > **Status:** MVP Funcional (Sana Fest Build)  
