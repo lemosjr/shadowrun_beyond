@@ -1,15 +1,15 @@
 /* --- runner_sheet/static/runner_sheet/script.js --- */
 
-// Variáveis Globais (serão preenchidas ao carregar a página)
+// 1. Variáveis Globais (serão preenchidas ao carregar a página)
 let danoFisicoAtual = 0;
 let danoStunAtual = 0;
 let personagemId = 0;
 
-// Quando o HTML terminar de carregar, leia os dados iniciais
+// 2. Inicialização: Lê os dados escondidos no HTML quando a página carrega
 document.addEventListener("DOMContentLoaded", () => {
     const bodyData = document.body.dataset;
     
-    // Pega os dados que escondemos na tag <body> do HTML
+    // Pega os dados do body (Ex: <body data-id="1" ...>)
     personagemId = bodyData.id;
     danoFisicoAtual = parseInt(bodyData.fisico || 0);
     danoStunAtual = parseInt(bodyData.stun || 0);
@@ -18,16 +18,16 @@ document.addEventListener("DOMContentLoaded", () => {
     renderizarDano();
 });
 
-// --- LÓGICA DE DANO ---
+// --- 3. LÓGICA DE DANO (Vida) ---
 
 function renderizarDano() {
-    // Físico
+    // Pinta Físico
     document.querySelectorAll('.box-fisico').forEach(box => {
         const idx = parseInt(box.dataset.index);
         if (idx <= danoFisicoAtual) box.classList.add('filled');
         else box.classList.remove('filled');
     });
-    // Stun
+    // Pinta Stun
     document.querySelectorAll('.box-stun').forEach(box => {
         const idx = parseInt(box.dataset.index);
         if (idx <= danoStunAtual) box.classList.add('filled');
@@ -36,10 +36,12 @@ function renderizarDano() {
 }
 
 async function setDano(tipo, valor) {
+    // Atualiza visualmente na hora
     if (tipo === 'fisico') danoFisicoAtual = valor;
     if (tipo === 'stun') danoStunAtual = valor;
     renderizarDano();
 
+    // Salva no servidor
     try {
         await fetch(`/runner/api/dano/${personagemId}/${tipo}/${valor}/`);
         console.log(`Dano ${tipo} salvo: ${valor}`);
@@ -49,30 +51,39 @@ async function setDano(tipo, valor) {
     }
 }
 
-// --- LÓGICA DE DADOS ---
+// --- 4. LÓGICA DE DADOS E ARMAS ---
 
-// Agora a função aceita um nome de arma opcional
 async function rolarDados(periciaId, nomeArma = null) {
     const consoleDiv = document.getElementById('console-log');
     
-    // Feedback visual mais rico
+    // Feedback visual inicial
     let msgInicial = ">> Iniciando sub-rotina de dados...";
+    let corMsg = "#666"; // Cinza padrão
+
     if (nomeArma) {
         msgInicial = `>> ENGAJANDO ALVO COM: [${nomeArma}]...`;
+        corMsg = "#ff3333"; // Vermelho alerta
     }
-    logNoConsole(msgInicial, false, nomeArma ? "#ff3333" : "#666");
+    
+    // Chama a função auxiliar (que agora existe lá embaixo!)
+    logNoConsole(msgInicial, false, corMsg);
 
     try {
+        // Bate na API do Django
         const response = await fetch(`/runner/api/rolar/${periciaId}/`);
+        
         if (!response.ok) throw new Error("Erro na API");
+        
         const data = await response.json();
 
+        // Lógica de sucesso/falha/glitch
         let classeResultado = data.hits > 0 ? 'log-success' : 'log-fail';
         if (data.glitch) classeResultado = 'log-fail';
 
-        // Se tiver arma, mudamos o título do log
+        // Título do resultado (Arma ou Perícia)
         const tituloTeste = nomeArma ? `${nomeArma} (via ${data.teste})` : data.teste;
 
+        // Monta o HTML do log
         const html = `
             <div class="log-entry">
                 <div>
@@ -90,4 +101,16 @@ async function rolarDados(periciaId, nomeArma = null) {
         console.error(error);
         logNoConsole(">> FATAL ERROR: Falha na conexão com Matrix.", true);
     }
+}
+
+// --- 5. FUNÇÃO AUXILIAR (Que estava faltando) ---
+function logNoConsole(msg, isError, color=null) {
+    const consoleDiv = document.getElementById('console-log');
+    
+    let style = "";
+    if (color) style = `style="color:${color}"`;
+    if (isError) style = `style="color:#f00; font-weight:bold"`;
+    
+    consoleDiv.innerHTML += `<div ${style}>${msg}</div>`;
+    consoleDiv.scrollTop = consoleDiv.scrollHeight;
 }

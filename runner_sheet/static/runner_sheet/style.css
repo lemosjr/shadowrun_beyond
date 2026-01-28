@@ -104,6 +104,9 @@ h1, h2, h3 { text-transform: uppercase; margin: 0; }
 .box-fisico.filled { background-color: #ff3333; box-shadow: 0 0 8px #ff3333; border-color: #ff3333; }
 .box-stun.filled { background-color: #3333ff; box-shadow: 0 0 8px #3333ff; border-color: #3333ff; }
 
+/* ARSENAL GRID */
+.arsenal-grid { display: grid; gap: 10px; margin-bottom: 25px; }
+
 /* ATRIBUTOS */
 .atributos-grid {
     display: grid;
@@ -122,7 +125,7 @@ h1, h2, h3 { text-transform: uppercase; margin: 0; }
 .attr-val { font-size: 1.8em; font-weight: bold; color: var(--neon-pink); }
 .attr-label { font-size: 0.7em; color: #888; margin-top: 5px; }
 
-/* PERÍCIAS */
+/* PERÍCIAS & LISTAS */
 .section-title { color: var(--neon-cyan); border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 15px; }
 
 .pericia-item {

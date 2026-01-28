@@ -1,4 +1,5 @@
-{% load static %} <!DOCTYPE html>
+{% load static %}
+<!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
@@ -57,9 +58,10 @@
     </div>
 
     <h3 class="section-title">Arsenal Conectado</h3>
-    <div class="arsenal-grid" style="display: grid; gap: 10px; margin-bottom: 25px;">
+    <div class="arsenal-grid">
         {% for arma in personagem.armas.all %}
-        <div class="pericia-item" style="border-left-color: #ff3333;"> <div style="flex: 1;">
+        <div class="pericia-item" style="border-left-color: #ff3333;">
+            <div style="flex: 1;">
                 <div style="font-weight: bold; font-size: 1.1em; color: #fff;">{{ arma.nome }}</div>
                 <div style="font-size: 0.8em; color: #888;">
                     Dano: <span style="color: #ff3333;">{{ arma.dano }}</span> | 
@@ -69,12 +71,12 @@
             </div>
             <button class="btn-roll" 
                     style="border-color: #ff3333; color: #ff3333;"
-                    onclick="rolarDados({{ arma.pericia_associada.id }}, '{{ arma.nome }}')">
+                    onclick="rolarDados({{ arma.pericia_associada.id }}, '{{ arma.nome|escapejs }}')">
                 ATIRAR
             </button>
         </div>
         {% empty %}
-        <div style="color: #444; font-style: italic;">Nenhuma arma linkada ao Smartlink.</div>
+        <div style="color: #444; font-style: italic; margin-bottom: 20px;">Nenhuma arma linkada.</div>
         {% endfor %}
     </div>
 
@@ -108,6 +110,6 @@
         <br>
     </div>
 
-    <script src="{% static 'runner_sheet/script.js' %}?v=2"></script>
+    <script src="{% static 'runner_sheet/script.js' %}?v=3"></script>
 </body>
 </html>
