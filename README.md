@@ -1,7 +1,3 @@
-Com certeza! Um bom `README.md` é essencial para que sua equipe saiba como instalar o projeto e para os juízes do **Sana Fest** entenderem o que foi feito.
-
-Aqui está um modelo profissional, formatado em Markdown, com uma pegada Cyberpunk. Você pode copiar o código abaixo, criar um arquivo chamado `README.md` na raiz do seu projeto e colar.
-
 ---
 
 ```markdown
