@@ -1,79 +1,70 @@
 from django.db import models
 
-class Personagem(models.Model):
-    METATIPOS = [
-        ('Humano', 'Humano'),
-        ('Elfo', 'Elfo'),
-        ('Anão', 'Anão'),
-        ('Ork', 'Ork'),
-        ('Troll', 'Troll'),
-    ]
-    
-    nome = models.CharField(max_length=100)
-    codinome = models.CharField(max_length=50, blank=True, help_text="Nome de rua (Ex: 'Street Samurai')")
-    metatipo = models.CharField(max_length=20, choices=METATIPOS, default='Humano')
+"""
+ARQUIVO: models.py
+OBJETIVO: Define a estrutura do Banco de Dados.
+NOTA PARA FRONTEND:
+    - Aqui estão os nomes dos campos que vocês usarão no HTML.
+    - Ex: Se aqui tem 'codinome', no HTML vocês usam {{ personagem.codinome }}.
+"""
 
+class Personagem(models.Model):
+    # Opções de Metatipo (Dropdown no Admin)
+    METATIPOS = [
+        ('HUM', 'Humano'),
+        ('ELF', 'Elfo'),
+        ('ORK', 'Ork'),
+        ('DWF', 'Anão'),
+        ('TRL', 'Troll'),
+    ]
+
+    nome = models.CharField(max_length=100)
+    codinome = models.CharField(max_length=100)
+    metatipo = models.CharField(max_length=3, choices=METATIPOS, default='HUM')
+    
+    # [IMAGEM]
+    # upload_to='runners_avatars/' -> As fotos vão para a pasta /media/runners_avatars/
+    # No HTML: <img src="{{ personagem.foto.url }}">
     foto = models.ImageField(upload_to='runners_avatars/', blank=True, null=True)
-    
-    # Monitores de Condição (Dano)
-    dano_fisico = models.IntegerField(default=0, help_text="Dano Físico atual")
-    dano_atordoamento = models.IntegerField(default=0, help_text="Dano de Atordoamento (Stun) atual")
-    
+
+    # Monitores de Dano (Guardam quantos quadradinhos estão pintados)
+    dano_fisico = models.IntegerField(default=0)
+    dano_atordoamento = models.IntegerField(default=0)
+
     def __str__(self):
-        return f"{self.nome} ({self.codinome})"
+        return f"{self.codinome} ({self.metatipo})"
+
 
 class Atributo(models.Model):
-    # Siglas padrão de Shadowrun (Inglês/Português misto para facilitar)
-    OPCOES_ATRIBUTOS = [
-        ('BOD', 'Constituição (BOD)'),
-        ('AGI', 'Agilidade (AGI)'),
-        ('REA', 'Reação (REA)'),
-        ('STR', 'Força (STR)'),
-        ('WIL', 'Vontade (WIL)'),
-        ('LOG', 'Lógica (LOG)'),
-        ('INT', 'Intuição (INT)'),
-        ('CHA', 'Carisma (CHA)'),
-        ('EDG', 'Limite (Edge)'),
-        ('MAG', 'Magia/Ressonância'),
-    ]
-
+    # related_name='atributos' permite usar: {% for attr in personagem.atributos.all %}
     personagem = models.ForeignKey(Personagem, related_name='atributos', on_delete=models.CASCADE)
-    nome = models.CharField(max_length=3, choices=OPCOES_ATRIBUTOS)
+    nome = models.CharField(max_length=50) # Ex: Agilidade, Força
     valor = models.IntegerField(default=1)
-
-    class Meta:
-        unique_together = ('personagem', 'nome') # Impede duplicar 'AGI' no mesmo char
 
     def __str__(self):
         return f"{self.nome}: {self.valor}"
 
+
 class Pericia(models.Model):
+    # related_name='pericias' permite usar: {% for p in personagem.pericias.all %}
     personagem = models.ForeignKey(Personagem, related_name='pericias', on_delete=models.CASCADE)
-    nome = models.CharField(max_length=50, help_text="Ex: Armas de Fogo, Furtividade")
-    atributo_base = models.CharField(max_length=3, choices=Atributo.OPCOES_ATRIBUTOS)
-    valor = models.IntegerField(default=0)
+    nome = models.CharField(max_length=100) # Ex: Pistolas, Hacking
+    atributo_base = models.CharField(max_length=50) # Ex: Agilidade
+    pontos = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"{self.nome} ({self.valor})"
+        return f"{self.nome} ({self.pontos})"
 
-    def get_dice_pool(self):
-        """
-        Retorna a parada de dados: Valor da Perícia + Valor do Atributo Base
-        """
-        try:
-            # Busca o atributo correspondente no mesmo personagem
-            attr = self.personagem.atributos.get(nome=self.atributo_base)
-            return self.valor + attr.valor
-        except Atributo.DoesNotExist:
-            return self.valor # Fallback se não achar o atributo
-        
+
 class Arma(models.Model):
+    # related_name='armas' permite usar: {% for arma in personagem.armas.all %}
     personagem = models.ForeignKey(Personagem, related_name='armas', on_delete=models.CASCADE)
+    
     nome = models.CharField(max_length=100, help_text="Ex: Ares Predator V")
     dano = models.CharField(max_length=10, help_text="Ex: 8P")
     ap = models.IntegerField(default=0, help_text="Penetração de Armadura (Ex: -1)")
     
-    # O Pulo do Gato: A arma sabe qual perícia usar
+    # Link inteligente: A arma sabe qual perícia usa para atirar
     pericia_associada = models.ForeignKey(Pericia, on_delete=models.CASCADE, help_text="Qual perícia essa arma usa?")
 
     def __str__(self):

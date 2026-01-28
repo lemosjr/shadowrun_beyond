@@ -1,22 +1,42 @@
 from django.contrib import admin
 from .models import Personagem, Atributo, Pericia, Arma
 
-# Isso cria uma interface onde você edita Atributos DENTRO da tela do Personagem
+# --- CONFIGURAÇÃO DE EDITORES "EMBUTIDOS" (INLINES) ---
+# Essas classes permitem editar Atributos, Armas e Perícias 
+# DENTRO da tela do Personagem, sem precisar ficar trocando de aba.
+
 class AtributoInline(admin.TabularInline):
     model = Atributo
-    extra = 8 # Já abre 8 espaços para preencher os atributos básicos
+    # Abre 8 linhas vazias automaticamente (Para: BOD, AGI, REA, STR, CHA, INT, LOG, WIL)
+    extra = 8 
 
 class ArmaInline(admin.TabularInline):
     model = Arma
-    extra = 1
+    extra = 1 # Abre 1 linha para arma (clique em "Adicionar" para mais)
+
 class PericiaInline(admin.TabularInline):
     model = Pericia
     extra = 1
 
+# --- CONFIGURAÇÃO DA TELA PRINCIPAL DE PERSONAGENS ---
+
 @admin.register(Personagem)
 class PersonagemAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'codinome', 'metatipo')
-    inlines = [AtributoInline, PericiaInline, ArmaInline] # Coloca tudo na mesma página
+    # O que aparece na lista geral (Colunas da tabela)
+    list_display = ('codinome', 'nome', 'metatipo')
+    
+    # Permite clicar tanto no Codinome quanto no Nome Real para editar
+    list_display_links = ('codinome', 'nome')
+    
+    # Cria um filtro lateral (Útil para achar só os "Humanos" ou "Elfos" rapidamente)
+    list_filter = ('metatipo',)
+    
+    # Barra de pesquisa (Busca por nome ou codinome)
+    search_fields = ('nome', 'codinome')
 
-# Se quiser registrar solto também pode, mas o Inline acima é melhor
+    # Conecta os editores embutidos criados acima
+    inlines = [AtributoInline, PericiaInline, ArmaInline]
+
+# Registro avulso (Opcional, caso precisem editar uma Perícia isolada fora da ficha)
 admin.site.register(Pericia)
+# admin.site.register(Arma) # Descomente se quiser que Armas apareçam no menu principal

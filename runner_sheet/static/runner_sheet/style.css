@@ -1,26 +1,30 @@
-/* --- runner_sheet/static/runner_sheet/style.css --- */
+/* --- ARQUIVO DE ESTILOS GERAIS --- */
+/* OBJETIVO: Definir o visual Cyberpunk do sistema. */
 
 :root {
+    /* [PALETA DE CORES] - Mudem aqui para trocar o tema global */
     --neon-pink: #ff00ff;
     --neon-cyan: #00ffff;
-    --bg-dark: #0a0a0a;
-    --panel-bg: #1a1a1a;
-    --text-main: #eee;
-    --border-dim: #333;
+    
+    --bg-dark: #0a0a0a;    /* Fundo principal (quase preto) */
+    --panel-bg: #1a1a1a;   /* Fundo dos painéis/cards */
+    --text-main: #eee;     /* Cor do texto padrão */
+    --border-dim: #333;    /* Bordas discretas */
 }
 
 body {
     background-color: var(--bg-dark);
     color: var(--text-main);
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Courier New', Courier, monospace; /* Fonte estilo Terminal */
     margin: 0;
     padding: 20px;
-    padding-bottom: 200px;
+    padding-bottom: 220px; /* Espaço extra embaixo pro Console não cobrir nada */
 }
 
 h1, h2, h3 { text-transform: uppercase; margin: 0; }
+a { text-decoration: none; color: inherit; }
 
-/* HEADER */
+/* --- 1. CABEÇALHO & AVATAR --- */
 .header-container {
     display: flex;
     justify-content: space-between;
@@ -32,11 +36,34 @@ h1, h2, h3 { text-transform: uppercase; margin: 0; }
 
 .char-info { flex: 1; }
 
-.codinome { font-size: 2em; color: var(--neon-cyan); text-shadow: 0 0 5px var(--neon-cyan); font-weight: bold; }
+.codinome { 
+    font-size: 2em; 
+    color: var(--neon-cyan); 
+    text-shadow: 0 0 5px var(--neon-cyan); 
+    font-weight: bold; 
+    display: inline-block;
+}
+
 .realname { font-size: 0.9em; color: #666; margin-top: 5px; }
 .metatipo { color: #888; border: 1px solid #444; padding: 2px 8px; font-size: 0.8em; }
 
-/* AVATAR */
+/* EFEITO GLITCH (Animação no Nome) */
+@keyframes glitch-anim {
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(-2px, -2px); }
+    60% { transform: translate(2px, 2px); }
+    80% { transform: translate(2px, -2px); }
+    100% { transform: translate(0); }
+}
+.codinome:hover {
+    animation: glitch-anim 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
+    color: #fff;
+    text-shadow: 2px 2px var(--neon-pink), -2px -2px var(--neon-cyan);
+    cursor: default;
+}
+
+/* Caixa da Foto (Avatar) */
 .char-avatar-box {
     width: 100px;
     height: 100px;
@@ -45,6 +72,7 @@ h1, h2, h3 { text-transform: uppercase; margin: 0; }
     margin-left: 15px;
     position: relative;
     overflow: hidden;
+    /* Efeito de linhas de scan (Scanlines) sobre a foto */
     background-image: repeating-linear-gradient(transparent 0px, transparent 2px, rgba(0, 255, 255, 0.1) 3px);
 }
 
@@ -52,9 +80,10 @@ h1, h2, h3 { text-transform: uppercase; margin: 0; }
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: grayscale(80%) contrast(1.2);
+    filter: grayscale(80%) contrast(1.2); /* Deixa a foto com visual "monitor velho" */
 }
 
+/* Triângulo decorativo no canto da foto */
 .char-avatar-box::after {
     content: '';
     position: absolute;
@@ -67,7 +96,7 @@ h1, h2, h3 { text-transform: uppercase; margin: 0; }
     border-color: transparent transparent var(--neon-cyan) transparent;
 }
 
-/* MONITORES */
+/* --- 2. MONITORES DE DANO (Vitalidade) --- */
 .monitor-section {
     background: var(--panel-bg);
     padding: 15px;
@@ -101,13 +130,13 @@ h1, h2, h3 { text-transform: uppercase; margin: 0; }
 }
 .dano-box:hover { border-color: #fff; transform: scale(1.1); }
 
+/* Cores quando a caixa está marcada */
 .box-fisico.filled { background-color: #ff3333; box-shadow: 0 0 8px #ff3333; border-color: #ff3333; }
 .box-stun.filled { background-color: #3333ff; box-shadow: 0 0 8px #3333ff; border-color: #3333ff; }
 
-/* ARSENAL GRID */
+/* --- 3. GRIDS E LISTAS (Armas, Atributos, Perícias) --- */
 .arsenal-grid { display: grid; gap: 10px; margin-bottom: 25px; }
 
-/* ATRIBUTOS */
 .atributos-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
@@ -120,12 +149,13 @@ h1, h2, h3 { text-transform: uppercase; margin: 0; }
     border: 1px solid var(--border-dim);
     padding: 10px;
     text-align: center;
+    transition: 0.2s;
 }
+.attr-box:hover { border-color: var(--neon-pink); background: #222; }
 
 .attr-val { font-size: 1.8em; font-weight: bold; color: var(--neon-pink); }
 .attr-label { font-size: 0.7em; color: #888; margin-top: 5px; }
 
-/* PERÍCIAS & LISTAS */
 .section-title { color: var(--neon-cyan); border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 15px; }
 
 .pericia-item {
@@ -153,33 +183,25 @@ h1, h2, h3 { text-transform: uppercase; margin: 0; }
 }
 .btn-roll:hover { background: var(--neon-cyan); color: var(--bg-dark); box-shadow: 0 0 15px var(--neon-cyan); }
 
-/* CONSOLE FLUTUANTE */
+/* --- 4. CONSOLE RETRÁTIL (Logs) --- */
 #console-log {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    
-    /* Altura quando ABERTO */
-    height: 200px; 
-    
-    background: rgba(10, 10, 10, 0.98); /* Fundo quase preto */
+    height: 200px; /* Altura ABERTO */
+    background: rgba(10, 10, 10, 0.98);
     border-top: 2px solid var(--neon-pink);
-    
-    /* Animação suave de subir e descer */
     transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    
     z-index: 9999;
     display: flex;
     flex-direction: column;
 }
 
-/* Estado FECHADO (Colapsado) */
 #console-log.collapsed {
-    height: 40px; /* Altura só da barrinha de título */
+    height: 40px; /* Altura FECHADO */
 }
 
-/* Cabeçalho do Console (Sempre visível) */
 #console-header {
     padding: 10px 15px;
     background: #1a1a1a;
@@ -189,21 +211,15 @@ h1, h2, h3 { text-transform: uppercase; margin: 0; }
     justify-content: space-between;
     font-weight: bold;
     color: var(--neon-pink);
-    user-select: none; /* Impede selecionar texto ao clicar rápido */
+    user-select: none;
 }
+#console-header:hover { background: #252525; color: #fff; }
 
-#console-header:hover {
-    background: #252525;
-    color: #fff;
-}
-
-/* Conteúdo do Log (Scrollável) */
 #console-content {
-    flex: 1; /* Ocupa o resto do espaço */
+    flex: 1;
     overflow-y: auto;
     padding: 10px;
     font-size: 0.9em;
-    font-family: 'Courier New', Courier, monospace;
 }
 
 .log-entry { margin-bottom: 8px; border-bottom: 1px solid #222; padding-bottom: 8px;}
@@ -211,16 +227,13 @@ h1, h2, h3 { text-transform: uppercase; margin: 0; }
 .log-fail { color: #f00; font-weight: bold; }
 .dice-results { color: #666; font-size: 0.8em; margin-top: 3px;}
 
+/* Scrollbar escura */
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: #111; }
 ::-webkit-scrollbar-thumb { background: #333; }
 
-/* --- TELA INICIAL (HOME) --- */
-.home-container {
-    max-width: 800px;
-    margin: 0 auto;
-    text-align: center;
-}
+/* --- 5. TELA HOME (Cards) --- */
+.home-container { max-width: 800px; margin: 0 auto; text-align: center; }
 
 .home-title {
     font-size: 2.5em;
@@ -241,10 +254,8 @@ h1, h2, h3 { text-transform: uppercase; margin: 0; }
 .runner-card {
     background: #151515;
     border: 1px solid #333;
-    position: relative;
-    transition: all 0.3s;
-    text-decoration: none; /* Tira sublinhado do link */
     display: block;
+    transition: all 0.3s;
 }
 
 .runner-card:hover {
@@ -253,46 +264,16 @@ h1, h2, h3 { text-transform: uppercase; margin: 0; }
     box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
 }
 
-.card-img-box {
-    height: 250px;
-    overflow: hidden;
-    background: #000;
-    border-bottom: 1px solid #333;
-}
+.card-img-box { height: 250px; overflow: hidden; background: #000; border-bottom: 1px solid #333; }
+.card-img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transition: 0.3s; }
+.runner-card:hover .card-img { filter: grayscale(0%); }
 
-.card-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: grayscale(100%);
-    transition: 0.3s;
-}
-
-.runner-card:hover .card-img {
-    filter: grayscale(0%); /* Fica colorido ao passar o mouse */
-}
-
-.card-info {
-    padding: 15px;
-    text-align: left;
-}
-
-.card-name {
-    color: var(--text-main);
-    font-size: 1.5em;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
+.card-info { padding: 15px; text-align: left; }
+.card-name { color: var(--text-main); font-size: 1.5em; font-weight: bold; margin-bottom: 5px; }
 .runner-card:hover .card-name { color: var(--neon-cyan); }
+.card-meta { color: #666; font-size: 0.9em; text-transform: uppercase; }
 
-.card-meta {
-    color: #666;
-    font-size: 0.9em;
-    text-transform: uppercase;
-}
-
-/* FORMS */
+/* --- 6. FORMULÁRIOS (Cadastro) --- */
 .cyber-input {
     background: #111;
     border: 1px solid var(--neon-cyan);
@@ -300,8 +281,10 @@ h1, h2, h3 { text-transform: uppercase; margin: 0; }
     padding: 10px;
     width: 100%;
     margin-bottom: 15px;
-    font-family: 'Courier New', Courier, monospace;
+    box-sizing: border-box; /* Garante que padding não estoure a largura */
+    font-family: inherit;
 }
+
 .btn-submit {
     background: var(--neon-pink);
     color: #000;
@@ -311,5 +294,7 @@ h1, h2, h3 { text-transform: uppercase; margin: 0; }
     cursor: pointer;
     text-transform: uppercase;
     width: 100%;
+    font-family: inherit;
+    font-size: 1.1em;
 }
-.btn-submit:hover { background: #fff; box-shadow: 0 0 10px #fff; }
+.btn-submit:hover { background: #fff; box-shadow: 0 0 15px var(--neon-pink); }

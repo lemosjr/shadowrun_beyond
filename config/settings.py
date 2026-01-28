@@ -1,21 +1,28 @@
 """
 Django settings for config project.
+ARQUIVO: settings.py
+OBJETIVO: Configurações globais do projeto (Banco, Apps, Pastas de Arquivos).
 """
 
 from pathlib import Path
 import os
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Caminho base do projeto (Raiz da pasta shadowrun_beyond)
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Quick-start development settings - unsuitable for production
-# SECURITY WARNING: keep the secret key used in production secret!
+# [SEGURANÇA] Chave secreta. Não compartilhar publicamente se for subir pra produção real.
 SECRET_KEY = 'django-insecure-troque-isso-se-for-pra-producao'
 
-# SECURITY WARNING: don't run with debug turned on in production!
+# [ATENÇÃO FRONTEND]
+# DEBUG = True: Mostra erros detalhados na tela (Ótimo para desenvolver).
+# DEBUG = False: Mostra "Erro 500/404" genérico (Modo apresentação/produção).
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# [CONEXÃO]
+# '*' permite que outros computadores/celulares na rede Wi-Fi acessem o site.
+# Necessário para testar responsividade em dispositivos móveis.
+ALLOWED_HOSTS = ['*']
+
 
 # Application definition
 
@@ -27,7 +34,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
-    # SEU APP (Crucial estar aqui)
+    # [NOSSO APP]
+    # Aqui é onde registramos o sistema da ficha.
+    # Se criar novos apps, adicione aqui.
     'runner_sheet',
 ]
 
@@ -39,6 +48,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # Middleware para servir arquivos estáticos de forma eficiente (opcional, mas bom ter)
+    # 'whitenoise.middleware.WhiteNoiseMiddleware', 
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -47,8 +58,9 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            # AQUI ESTÁ A CORREÇÃO "MARRETA"
-            # Isso força o Django a olhar dentro da pasta do seu app
+            # [FRONTEND]
+            # Forçamos o Django a olhar dentro da pasta templates do app.
+            # Local dos HTMLs: runner_sheet/templates/runner_sheet/
             BASE_DIR / 'runner_sheet' / 'templates',
         ],
         'APP_DIRS': True,
@@ -67,8 +79,8 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
+# Por padrão usamos SQLite (um arquivo simples). 
+# Não precisa instalar nada extra.
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -78,8 +90,6 @@ DATABASES = {
 
 
 # Password validation
-# https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -97,31 +107,29 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Internationalization
-# https://docs.djangoproject.com/en/5.0/topics/i18n/
-
 LANGUAGE_CODE = 'pt-br'
-
 TIME_ZONE = 'America/Sao_Paulo'
-
 USE_I18N = True
-
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.0/howto/static-files/
+# --- [CONFIGURAÇÃO DE ARQUIVOS ESTÁTICOS & MEDIA] ---
+# É AQUI QUE A EQUIPE DE DESIGN DEVE PRESTAR ATENÇÃO
 
+# URL base para acessar CSS/JS no navegador (ex: /static/style.css)
 STATIC_URL = 'static/'
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
+# [FRONTEND]
+# Onde o Django procura os arquivos CSS e JS.
+# Caminho físico: runner_sheet/static/
+STATICFILES_DIRS = [
+    BASE_DIR / "runner_sheet" / "static",
+]
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
+# Configuração para UPLOAD de imagens (Avatares dos Personagens)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Configuração do Whitenoise (Para o CSS não sumir na apresentação)
-if not DEBUG:
-    STATIC_ROOT = BASE_DIR / 'staticfiles'
-    STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+# Default primary key field type
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

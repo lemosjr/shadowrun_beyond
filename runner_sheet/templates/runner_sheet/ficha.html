@@ -20,6 +20,10 @@
             <div style="margin-top: 5px;">
                 <span class="metatipo">{{ personagem.get_metatipo_display }}</span>
             </div>
+            
+            <div style="margin-top: 10px;">
+                <a href="{% url 'home' %}" style="color: #444; font-size: 0.8em; text-decoration: none;">[ < VOLTAR AO MENU ]</a>
+            </div>
         </div>
         
         <div class="char-avatar-box">
@@ -44,6 +48,7 @@
             {% endwith %}
         </div>
         <br>
+        
         <div class="monitor-label">
             <span>MONITOR STUN</span>
             <span class="btn-limpar" onclick="setDano('stun', 0)">[RESETAR]</span>
@@ -80,13 +85,14 @@
         {% endfor %}
     </div>
 
+    <h3 class="section-title">Atributos</h3>
     <div class="atributos-grid">
         {% for attr in personagem.atributos.all %}
         <div class="attr-box" 
              style="cursor: pointer;" 
              onclick="rolarAtributo({{ attr.id }}, '{{ attr.nome }}')"
-             title="Clique para rolar {{ attr.nome }}">
-            
+             title="Clique para rolar teste de {{ attr.nome }}">
+             
             <div class="attr-val">{{ attr.valor }}</div>
             <div class="attr-label">{{ attr.nome }}</div>
         </div>
@@ -119,7 +125,7 @@
             <div style="color: var(--neon-pink)">>> SISTEMA INICIADO...</div>
             <div style="color: var(--neon-cyan)">>> CONECTADO: {{ personagem.codinome }}</div>
             <br>
-            </div>
+        </div>
     </div>
 
     <script src="{% static 'runner_sheet/script.js' %}?v=5"></script>

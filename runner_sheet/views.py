@@ -1,133 +1,114 @@
-import random
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
+from .models import Personagem, Pericia, Atributo
+from .forms import PersonagemForm
+import random
 
-from runner_sheet.forms import PersonagemForm
-from .models import Atributo, Personagem, Pericia
+"""
+ARQUIVO: views.py
+OBJETIVO: Controla a lógica de navegação e as regras do jogo (Rolagens).
+"""
 
+# --- [NAVEGAÇÃO] ---
+
+def lista_personagens(request):
+    """Tela Inicial: Mostra os cards de todos os runners."""
+    runners = Personagem.objects.all()
+    return render(request, 'runner_sheet/home.html', {'runners': runners})
+
+def ficha_detalhe(request, pk):
+    """Tela da Ficha: Mostra os detalhes de UM personagem específico."""
+    personagem = get_object_or_404(Personagem, pk=pk)
+    return render(request, 'runner_sheet/ficha.html', {'personagem': personagem})
 
 def criar_personagem(request):
+    """Tela de Cadastro: Cria um novo runner e gera seus atributos iniciais."""
     if request.method == 'POST':
         form = PersonagemForm(request.POST, request.FILES)
         if form.is_valid():
             personagem = form.save()
             
-            # --- MAGIA: Cria os atributos padrão automaticamente ---
+            # AUTOMACAO: Cria os 8 atributos básicos automaticamente com valor 1
+            # Isso evita que a ficha quebre por falta de atributos.
             atributos_padrao = ['Corpo', 'Agilidade', 'Reação', 'Força', 'Vontade', 'Lógica', 'Intuição', 'Carisma']
             for nome_attr in atributos_padrao:
                 Atributo.objects.create(personagem=personagem, nome=nome_attr, valor=1)
             
-            # Redireciona para a ficha recém criada
             return redirect('ficha_detalhe', pk=personagem.pk)
     else:
         form = PersonagemForm()
     
     return render(request, 'runner_sheet/cadastro.html', {'form': form})
-# --- LÓGICA PURA (HELPER) ---
-# Esta função não é uma "view", é apenas uma calculadora interna
-def _rolar_dados_shadowrun(pool):
-    """
-    Rola 'pool' dados d6.
-    Retorna:
-    - hits: Quantidade de 5s e 6s
-    - dados: Lista com os resultados individuais (ex: [1, 5, 6, 2])
-    - glitch: Booleano (se mais da metade for 1)
-    """
-    if pool < 1:
-        pool = 0
-        
-    resultados = [random.randint(1, 6) for _ in range(pool)]
-    
-    hits = 0
-    uns = 0
-    
-    for dado in resultados:
-        if dado >= 5:
-            hits += 1
-        if dado == 1:
-            uns += 1
-            
-    # Regra de Glitch (Falha): Mais da metade dos dados são 1
-    # Se pool for 0, não tem como ter glitch matemático normal, tratamos à parte
-    glitch = False
-    if pool > 0:
-        glitch = uns > (pool / 2)
-    
-    mensagem = 'Sucesso'
-    if hits == 0 and glitch:
-        mensagem = 'FALHA CRÍTICA!'
-    elif glitch:
-        mensagem = 'GLITCH!'
-    elif hits == 0:
-        mensagem = 'Falha'
 
+
+# --- [API & REGRAS DO SISTEMA] ---
+# Essas funções não retornam HTML, retornam JSON para o JavaScript.
+
+def _rolar_dados_shadowrun(pool_dados):
+    """
+    Lógica Central de Regras (Shadowrun 5e/6e):
+    - Rola N dados de 6 lados (d6).
+    - 5 ou 6 = Sucesso (Hit).
+    - 1 = Falha (Glitch).
+    """
+    resultados = [random.randint(1, 6) for _ in range(pool_dados)]
+    hits = resultados.count(5) + resultados.count(6)
+    uns = resultados.count(1)
+    
+    # Regra de Glitch (Falha Crítica)
+    # Se mais da metade dos dados forem 1, é um Glitch.
+    glitch = uns > (pool_dados / 2)
+    
+    mensagem = "Sucesso"
+    if glitch:
+        mensagem = "FALHA CRÍTICA" if hits == 0 else "GLITCH (Sucesso com problema)"
+    
     return {
-        'pool_total': pool,
+        'pool_total': pool_dados,
         'resultados': resultados,
         'hits': hits,
         'glitch': glitch,
         'mensagem': mensagem
     }
 
-def api_rolar_atributo(request, atributo_id):
-    """Rola dados baseados apenas no valor do atributo"""
-    atributo = get_object_or_404(Atributo, pk=atributo_id)
+def api_rolar_pericia(request, pericia_id):
+    """Chamada quando clica no botão 'EXECUTAR' de uma perícia ou arma."""
+    pericia = get_object_or_404(Pericia, pk=pericia_id)
     
-    # Pool é apenas o valor do atributo
-    pool = atributo.valor
+    # Tenta achar o atributo base (Ex: Agilidade) ligado à perícia
+    # Se não achar (erro de digitação no cadastro), assume valor 0 pra não travar
+    try:
+        atributo = pericia.personagem.atributos.get(nome=pericia.atributo_base)
+        valor_atributo = atributo.valor
+    except Atributo.DoesNotExist:
+        valor_atributo = 0
+
+    # Pool = Atributo + Perícia
+    pool = valor_atributo + pericia.pontos
     
-    # Usa a mesma calculadora de antes
     resultado = _rolar_dados_shadowrun(pool)
     
     return JsonResponse({
-        'personagem': atributo.personagem.nome,
-        'teste': f"Teste de {atributo.nome}",
+        'personagem': pericia.personagem.nome,
+        'teste': f"Teste de {pericia.nome}",
+        **resultado # Desempacota o dicionário de resultados
+    })
+
+def api_rolar_atributo(request, atributo_id):
+    """Chamada quando clica direto na caixinha do Atributo."""
+    attr = get_object_or_404(Atributo, pk=atributo_id)
+    
+    # Pool = Apenas o valor do atributo
+    resultado = _rolar_dados_shadowrun(attr.valor)
+    
+    return JsonResponse({
+        'personagem': attr.personagem.nome,
+        'teste': f"Teste de {attr.nome}",
         **resultado
     })
 
-# --- VIEWS (INTERFACE) ---
-
-def ficha_detalhe(request, pk):
-    """Renderiza a ficha do personagem (HTML)"""
-    personagem = get_object_or_404(Personagem, pk=pk)
-    
-    # ATENÇÃO: Dependendo de onde você salvou o HTML, use uma das linhas abaixo:
-    
-    # Opção A: Se o arquivo está em runner_sheet/templates/runner_sheet/ficha.html (Padrão Django)
-    return render(request, 'runner_sheet/ficha.html', {'personagem': personagem})
-    
-    # Opção B: Se o arquivo está solto em runner_sheet/templates/ficha.html (Padrão Rápido)
-    # return render(request, 'ficha.html', {'personagem': personagem})
-
-def api_rolar_pericia(request, pericia_id):
-    """
-    API que o Frontend vai chamar via JavaScript (AJAX).
-    Retorna JSON puro, sem HTML.
-    """
-    pericia = get_object_or_404(Pericia, pk=pericia_id)
-    
-    # 1. Calcula a pool (Atributo + Pericia)
-    # Certifique-se que seu model Pericia tem o método get_dice_pool()
-    dice_pool = pericia.get_dice_pool()
-    
-    # 2. Rola os dados
-    resultado = _rolar_dados_shadowrun(dice_pool)
-    
-    # 3. Monta a resposta para o Javascript
-    response_data = {
-        'personagem': pericia.personagem.nome,
-        'teste': f"{pericia.nome} ({pericia.atributo_base})",
-        **resultado # Desempacota hits, dados, glitch, etc.
-    }
-    
-    return JsonResponse(response_data)
-
-# Adicione essa função nova no final do views.py
 def api_atualizar_dano(request, pk, tipo, valor):
-    """
-    Atualiza o dano Físico ('fisico') ou Atordoamento ('stun').
-    Exemplo de uso: /runner/api/dano/1/fisico/3/ (Define 3 de dano físico)
-    """
+    """Salva o dano (Físico ou Stun) quando clica nos quadradinhos."""
     personagem = get_object_or_404(Personagem, pk=pk)
     
     if tipo == 'fisico':
@@ -136,10 +117,4 @@ def api_atualizar_dano(request, pk, tipo, valor):
         personagem.dano_atordoamento = valor
         
     personagem.save()
-    
     return JsonResponse({'status': 'ok', 'novo_valor': valor})
-
-def lista_personagens(request):
-    """Tela inicial que lista todos os runners disponíveis"""
-    runners = Personagem.objects.all()
-    return render(request, 'runner_sheet/home.html', {'runners': runners})

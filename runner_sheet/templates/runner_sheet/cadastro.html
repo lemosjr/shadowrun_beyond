@@ -3,21 +3,28 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NOVO OPERATIVO</title>
+    
     <link rel="stylesheet" href="{% static 'runner_sheet/style.css' %}">
 </head>
 <body>
+
     <div class="home-container" style="max-width: 500px; margin-top: 50px;">
         <h2 class="home-title">>> NOVO ARQUIVO</h2>
         
         <form method="post" enctype="multipart/form-data">
+            
             {% csrf_token %}
+            
             {{ form.as_p }}
+            
             <button type="submit" class="btn-submit">INICIAR COMPILAÇÃO</button>
         </form>
         
         <br>
         <a href="{% url 'home' %}" style="color: #666; text-decoration: none;">[CANCELAR OPERAÇÃO]</a>
     </div>
+
 </body>
 </html>
