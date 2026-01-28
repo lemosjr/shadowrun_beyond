@@ -18,6 +18,12 @@ urlpatterns = [
     # Ficha Completa - Acessada via {% url 'ficha_detalhe' id %}
     path('ficha/<int:pk>/', views.ficha_detalhe, name='ficha_detalhe'),
 
+    # Adicionar Perícia - Acessada via {% url 'add_pericia' id %}
+    path('ficha/<int:pk>/add_pericia/', views.adicionar_pericia, name='add_pericia'),
+
+    # Adicionar Arma - Acessada via {% url 'add_arma' id %}
+    path('ficha/<int:pk>/add_arma/', views.adicionar_arma, name='add_arma'),
+
     # --- [API (JavaScript / Fetch)] ---
     # Essas rotas não abrem páginas, elas retornam dados JSON.
     

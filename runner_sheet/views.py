@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from .models import Personagem, Pericia, Atributo
-from .forms import PersonagemForm
+from .forms import PersonagemForm, PericiaForm, ArmaForm
 import random
 
 """
@@ -16,29 +16,80 @@ def lista_personagens(request):
     runners = Personagem.objects.all()
     return render(request, 'runner_sheet/home.html', {'runners': runners})
 
-def ficha_detalhe(request, pk):
-    """Tela da Ficha: Mostra os detalhes de UM personagem específico."""
-    personagem = get_object_or_404(Personagem, pk=pk)
-    return render(request, 'runner_sheet/ficha.html', {'personagem': personagem})
-
 def criar_personagem(request):
-    """Tela de Cadastro: Cria um novo runner e gera seus atributos iniciais."""
+    """Cria personagem e define atributos iniciais + cálculo de vida"""
     if request.method == 'POST':
         form = PersonagemForm(request.POST, request.FILES)
         if form.is_valid():
             personagem = form.save()
             
-            # AUTOMACAO: Cria os 8 atributos básicos automaticamente com valor 1
-            # Isso evita que a ficha quebre por falta de atributos.
-            atributos_padrao = ['Corpo', 'Agilidade', 'Reação', 'Força', 'Vontade', 'Lógica', 'Intuição', 'Carisma']
-            for nome_attr in atributos_padrao:
-                Atributo.objects.create(personagem=personagem, nome=nome_attr, valor=1)
+            # ATUALIZA OS ATRIBUTOS COM O QUE O USUÁRIO DIGITOU
+            # O Signal já criou os atributos com valor 1, agora vamos atualizar.
+            mapa_campos = {
+                'Corpo': form.cleaned_data['val_corpo'],
+                'Agilidade': form.cleaned_data['val_agilidade'],
+                'Reação': form.cleaned_data['val_reacao'],
+                'Força': form.cleaned_data['val_forca'],
+                'Vontade': form.cleaned_data['val_vontade'],
+                'Lógica': form.cleaned_data['val_logica'],
+                'Intuição': form.cleaned_data['val_intuicao'],
+                'Carisma': form.cleaned_data['val_carisma'],
+            }
+            
+            for nome_attr, valor in mapa_campos.items():
+                attr = personagem.atributos.get(nome=nome_attr)
+                attr.valor = valor
+                attr.save()
+            
+            # CÁLCULO AUTOMÁTICO DE VIDA (FISICO E STUN)
+            personagem.recalcular_monitores()
             
             return redirect('ficha_detalhe', pk=personagem.pk)
     else:
         form = PersonagemForm()
     
     return render(request, 'runner_sheet/cadastro.html', {'form': form})
+
+def ficha_detalhe(request, pk):
+    personagem = get_object_or_404(Personagem, pk=pk)
+    
+    # Forms para os modais de adicionar coisas
+    form_pericia = PericiaForm()
+    form_arma = ArmaForm()
+    
+    # Precisamos gerar um range numérico no Python para o Template usar no Loop de Vida
+    range_fisico = range(1, personagem.max_fisico + 1)
+    range_stun = range(1, personagem.max_stun + 1)
+    
+    return render(request, 'runner_sheet/ficha.html', {
+        'personagem': personagem,
+        'range_fisico': range_fisico,
+        'range_stun': range_stun,
+        'form_pericia': form_pericia,
+        'form_arma': form_arma
+    })
+
+# --- NOVAS VIEWS PARA ADICIONAR ITENS ---
+
+def adicionar_pericia(request, pk):
+    personagem = get_object_or_404(Personagem, pk=pk)
+    if request.method == 'POST':
+        form = PericiaForm(request.POST)
+        if form.is_valid():
+            pericia = form.save(commit=False)
+            pericia.personagem = personagem
+            pericia.save()
+    return redirect('ficha_detalhe', pk=pk)
+
+def adicionar_arma(request, pk):
+    personagem = get_object_or_404(Personagem, pk=pk)
+    if request.method == 'POST':
+        form = ArmaForm(request.POST)
+        if form.is_valid():
+            arma = form.save(commit=False)
+            arma.personagem = personagem
+            arma.save()
+    return redirect('ficha_detalhe', pk=pk)
 
 
 # --- [API & REGRAS DO SISTEMA] ---

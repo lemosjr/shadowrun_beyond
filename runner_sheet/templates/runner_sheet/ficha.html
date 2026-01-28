@@ -36,33 +36,50 @@
     </div>
 
     <div class="monitor-section">
+        
         <div class="monitor-label">
-            <span>MONITOR FÍSICO</span>
+            <span>MONITOR FÍSICO (Máx: {{ personagem.max_fisico }})</span>
             <span class="btn-limpar" onclick="setDano('fisico', 0)">[RESETAR]</span>
         </div>
         <div class="track-container" id="track-fisico">
-            {% with ''|center:12 as range %}
-            {% for _ in range %}
-                <div class="dano-box box-fisico" data-index="{{ forloop.counter }}" onclick="setDano('fisico', {{ forloop.counter }})"></div>
+            {% for i in range_fisico %}
+                <div class="dano-box box-fisico" data-index="{{ i }}" onclick="setDano('fisico', {{ i }})"></div>
             {% endfor %}
-            {% endwith %}
         </div>
         <br>
         
         <div class="monitor-label">
-            <span>MONITOR STUN</span>
+            <span>MONITOR STUN (Máx: {{ personagem.max_stun }})</span>
             <span class="btn-limpar" onclick="setDano('stun', 0)">[RESETAR]</span>
         </div>
         <div class="track-container" id="track-stun">
-            {% with ''|center:12 as range %}
-            {% for _ in range %}
-                <div class="dano-box box-stun" data-index="{{ forloop.counter }}" onclick="setDano('stun', {{ forloop.counter }})"></div>
+            {% for i in range_stun %}
+                <div class="dano-box box-stun" data-index="{{ i }}" onclick="setDano('stun', {{ i }})"></div>
             {% endfor %}
-            {% endwith %}
         </div>
     </div>
 
-    <h3 class="section-title">Arsenal Conectado</h3>
+    <h3 class="section-title">
+        Arsenal 
+        <button onclick="document.getElementById('form-add-arma').style.display='block'" 
+                style="float:right; background:none; border:none; color:var(--neon-cyan); cursor:pointer; font-family:inherit; font-weight:bold;">
+            [+ ADICIONAR]
+        </button>
+    </h3>
+
+    <div id="form-add-arma" style="display:none; background:#151515; padding:15px; margin-bottom:15px; border:1px solid var(--neon-cyan);">
+        <h4 style="color:#fff; margin-top:0;">Nova Arma</h4>
+        <form action="{% url 'add_arma' personagem.id %}" method="post">
+            {% csrf_token %}
+            {{ form_arma.as_p }}
+            <div style="display:flex; gap:10px; margin-top:10px;">
+                <button type="submit" class="btn-roll" style="flex:1;">SALVAR</button>
+                <button type="button" class="btn-roll" style="border-color:#555; color:#888; flex:1;" 
+                        onclick="document.getElementById('form-add-arma').style.display='none'">CANCELAR</button>
+            </div>
+        </form>
+    </div>
+
     <div class="arsenal-grid">
         {% for arma in personagem.armas.all %}
         <div class="pericia-item" style="border-left-color: #ff3333;">
@@ -99,13 +116,34 @@
         {% endfor %}
     </div>
 
-    <h3 class="section-title">Programas & Perícias</h3>
+    <h3 class="section-title">
+        Programas & Perícias
+        <button onclick="document.getElementById('form-add-pericia').style.display='block'" 
+                style="float:right; background:none; border:none; color:var(--neon-cyan); cursor:pointer; font-family:inherit; font-weight:bold;">
+            [+ ADICIONAR]
+        </button>
+    </h3>
+
+    <div id="form-add-pericia" style="display:none; background:#151515; padding:15px; margin-bottom:15px; border:1px solid var(--neon-cyan);">
+        <h4 style="color:#fff; margin-top:0;">Instalar Perícia</h4>
+        <form action="{% url 'add_pericia' personagem.id %}" method="post">
+            {% csrf_token %}
+            {{ form_pericia.as_p }}
+            <div style="display:flex; gap:10px; margin-top:10px;">
+                <button type="submit" class="btn-roll" style="flex:1;">INSTALAR</button>
+                <button type="button" class="btn-roll" style="border-color:#555; color:#888; flex:1;" 
+                        onclick="document.getElementById('form-add-pericia').style.display='none'">CANCELAR</button>
+            </div>
+        </form>
+    </div>
+
     <div id="pericias-list">
         {% for pericia in personagem.pericias.all %}
         <div class="pericia-item">
             <div>
                 <strong style="font-size: 1.1em;">{{ pericia.nome }}</strong> 
                 <span style="color:#555; margin-left: 5px;">[{{ pericia.atributo_base }}]</span>
+                <span style="color:var(--neon-pink); font-weight:bold; font-size:0.9em; margin-left:5px;"> :: {{ pericia.pontos }}</span>
             </div>
             <button class="btn-roll" onclick="rolarDados({{ pericia.id }})">EXECUTAR</button>
         </div>
@@ -115,12 +153,10 @@
     </div>
 
     <div id="console-log" class="collapsed">
-        
         <div id="console-header" onclick="toggleConsole()">
             <span>>> TERMINAL DE DADOS</span>
             <span id="btn-toggle-console">[ MAXIMIZAR ]</span>
         </div>
-
         <div id="console-content">
             <div style="color: var(--neon-pink)">>> SISTEMA INICIADO...</div>
             <div style="color: var(--neon-cyan)">>> CONECTADO: {{ personagem.codinome }}</div>
@@ -128,6 +164,6 @@
         </div>
     </div>
 
-    <script src="{% static 'runner_sheet/script.js' %}?v=5"></script>
+    <script src="{% static 'runner_sheet/script.js' %}?v=6"></script>
 </body>
 </html>
