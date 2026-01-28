@@ -130,7 +130,7 @@ O navegador guarda cache. Use **CTRL + F5** na página para forçar o recarregam
 
 ---
 
-Developed by **[SEU NOME / NOME DA EQUIPE]** for Sana Fest.
+Developed by **[Lemos junior, Levi mansinho e João pedro]** for Sana Fest.
 *See you in the shadows, chummer.*
 
 ```
