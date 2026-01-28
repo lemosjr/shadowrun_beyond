@@ -102,3 +102,8 @@ def api_atualizar_dano(request, pk, tipo, valor):
     personagem.save()
     
     return JsonResponse({'status': 'ok', 'novo_valor': valor})
+
+def lista_personagens(request):
+    """Tela inicial que lista todos os runners disponíveis"""
+    runners = Personagem.objects.all()
+    return render(request, 'runner_sheet/home.html', {'runners': runners})

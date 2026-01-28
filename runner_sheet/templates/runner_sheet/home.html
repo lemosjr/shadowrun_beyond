@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHADOWRUN // DATABASE</title>
+    <link rel="stylesheet" href="{% static 'runner_sheet/style.css' %}">
+</head>
+<body>
+
+    <div class="home-container">
+        <h1 class="home-title">>> SELECIONE O OPERATIVO</h1>
+        
+        <div class="runners-grid">
+            {% for runner in runners %}
+            <a href="{% url 'ficha_detalhe' runner.id %}" class="runner-card">
+                <div class="card-img-box">
+                    {% if runner.foto %}
+                        <img src="{{ runner.foto.url }}" class="card-img" alt="{{ runner.codinome }}">
+                    {% else %}
+                        <div style="height:100%; display:flex; align-items:center; justify-content:center; color:#333; font-size:4em;">?</div>
+                    {% endif %}
+                </div>
+                
+                <div class="card-info">
+                    <div class="card-name">{{ runner.codinome }}</div>
+                    <div class="card-meta">
+                        {{ runner.get_metatipo_display }} // {{ runner.nome }}
+                    </div>
+                </div>
+            </a>
+            {% empty %}
+            <div style="color: #666; grid-column: 1/-1;">
+                Nenhum arquivo encontrado no servidor. Acesse o /admin para criar.
+            </div>
+            {% endfor %}
+        </div>
+
+        <div style="margin-top: 50px; color: #444; font-size: 0.8em;">
+            SYSTEM VERSION 0.9.2 [BETA] <br>
+            SHADOWRUN BEYOND PROJECT
+        </div>
+    </div>
+
+</body>
+</html>

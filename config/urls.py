@@ -5,9 +5,12 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('runner/', include('runner_sheet.urls')),
+    
+    # MUDANÇA AQUI: Deixe as aspas vazias
+    # Isso diz: "A raiz do site é o meu app runner_sheet"
+    path('', include('runner_sheet.urls')), 
 ]
 
-# Isso permite ver as imagens de upload durante o desenvolvimento
+# Configuração de Imagens (Mantenha se já tiver)
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
