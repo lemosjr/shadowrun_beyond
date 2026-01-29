@@ -1,11 +1,14 @@
-{% load static %} <!DOCTYPE html>
+{% load static %}
+<!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SHADOWRUN // DATABASE</title>
     
-    <link rel="stylesheet" href="{% static 'runner_sheet/style.css' %}">
+    <link rel="stylesheet" href="{% static 'runner_sheet/css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'runner_sheet/css/layout.css' %}">
+    <link rel="stylesheet" href="{% static 'runner_sheet/css/sheet.css' %}">
 </head>
 <body>
 
@@ -19,11 +22,8 @@
         </div>
         
         <div class="runners-grid">
-            
             {% for runner in runners %}
-            
             <a href="{% url 'ficha_detalhe' runner.id %}" class="runner-card">
-                
                 <div class="card-img-box">
                     {% if runner.foto %}
                         <img src="{{ runner.foto.url }}" class="card-img" alt="{{ runner.codinome }}">
@@ -39,17 +39,15 @@
                     </div>
                 </div>
             </a>
-            
             {% empty %}
             <div style="color: #666; grid-column: 1/-1;">
                 Nenhum arquivo encontrado no servidor. Clique em NOVO RUNNER acima.
             </div>
             {% endfor %}
-            
         </div>
 
         <div style="margin-top: 50px; color: #444; font-size: 0.8em;">
-            SYSTEM VERSION 0.9.3 [BETA] <br>
+            SYSTEM VERSION 0.9.4 [STABLE] <br>
             SHADOWRUN BEYOND PROJECT
         </div>
     </div>

@@ -1,0 +1,56 @@
+/* --- ARQUIVO: base.css --- */
+/* OBJETIVO: Variáveis globais, tipografia e elementos de formulário */
+
+:root {
+    /* [PALETA DE CORES] */
+    --neon-pink: #ff00ff;
+    --neon-cyan: #00ffff;
+    
+    --bg-dark: #0a0a0a;    /* Fundo principal */
+    --panel-bg: #1a1a1a;   /* Fundo dos painéis */
+    --text-main: #eee;     /* Texto padrão */
+    --border-dim: #333;    /* Bordas discretas */
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: 'Courier New', Courier, monospace;
+    margin: 0;
+    padding: 20px;
+    padding-bottom: 220px;
+}
+
+h1, h2, h3 { text-transform: uppercase; margin: 0; }
+a { text-decoration: none; color: inherit; }
+
+/* Scrollbar Customizada */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #111; }
+::-webkit-scrollbar-thumb { background: #333; }
+
+/* --- FORMULÁRIOS GLOBAIS --- */
+.cyber-input {
+    background: #111;
+    border: 1px solid var(--neon-cyan);
+    color: #fff;
+    padding: 10px;
+    width: 100%;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.btn-submit {
+    background: var(--neon-pink);
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    width: 100%;
+    font-family: inherit;
+    font-size: 1.1em;
+}
+.btn-submit:hover { background: #fff; box-shadow: 0 0 15px var(--neon-pink); }

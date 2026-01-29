@@ -6,7 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NOVO OPERATIVO</title>
     
-    <link rel="stylesheet" href="{% static 'runner_sheet/style.css' %}">
+    <link rel="stylesheet" href="{% static 'runner_sheet/css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'runner_sheet/css/layout.css' %}">
+    <link rel="stylesheet" href="{% static 'runner_sheet/css/sheet.css' %}">
 </head>
 <body>
 
@@ -14,7 +16,6 @@
         <h2 class="home-title">>> NOVO ARQUIVO</h2>
         
         <form method="post" enctype="multipart/form-data">
-            
             {% csrf_token %}
             
             {{ form.as_p }}
