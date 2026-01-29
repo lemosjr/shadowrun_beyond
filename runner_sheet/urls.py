@@ -24,6 +24,9 @@ urlpatterns = [
     # Adicionar Arma - Acessada via {% url 'add_arma' id %}
     path('ficha/<int:pk>/add_arma/', views.adicionar_arma, name='add_arma'),
 
+    # Rolar Iniciativa - Acessada via {% url 'api_iniciativa' id %}
+    path('api/iniciativa/<int:pk>/', views.api_rolar_iniciativa, name='api_iniciativa'),
+
     # --- [API (JavaScript / Fetch)] ---
     # Essas rotas não abrem páginas, elas retornam dados JSON.
     

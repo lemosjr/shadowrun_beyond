@@ -181,3 +181,31 @@ function toggleConsole() {
         btn.innerText = '[ MINIMIZAR ]';
     }
 }
+
+// --- 8. FUNÇÃO DE INICIATIVA ---
+async function rolarIniciativa() {
+    logNoConsole(">> CALCULANDO TAXA DE REAÇÃO (Iniciativa)...", false, "#ffff00");
+
+    try {
+        const response = await fetch(`/api/iniciativa/${personagemId}/`);
+        const data = await response.json();
+        
+        const html = `
+            <div class="log-entry" style="border-left: 3px solid #ffff00; padding-left: 10px;">
+                <div>
+                    <strong>INICIATIVA</strong>: 
+                    <span style="color: #ffff00; font-size: 1.2em; font-weight: bold;">
+                        ${data.mensagem}
+                    </span>
+                </div>
+                <div class="dice-results">Base (REA+INT): ${data.pool_total} | Dado: [${data.resultados[0]}]</div>
+            </div>
+        `;
+        
+        adicionarAoLog(html);
+        
+    } catch (e) {
+        console.error(e);
+        logNoConsole(">> ERRO AO SINCRONIZAR INICIATIVA.", true);
+    }
+}

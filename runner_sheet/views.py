@@ -169,3 +169,28 @@ def api_atualizar_dano(request, pk, tipo, valor):
         
     personagem.save()
     return JsonResponse({'status': 'ok', 'novo_valor': valor})
+
+
+def api_rolar_iniciativa(request, pk):
+    """Calcula Iniciativa: (Reação + Intuição) + 1d6"""
+    personagem = get_object_or_404(Personagem, pk=pk)
+    
+    try:
+        reacao = personagem.atributos.get(nome='Reação').valor
+        intuicao = personagem.atributos.get(nome='Intuição').valor
+    except:
+        reacao = 0
+        intuicao = 0
+    
+    dado = random.randint(1, 6)
+    total = reacao + intuicao + dado
+    
+    return JsonResponse({
+        'personagem': personagem.codinome,
+        'teste': 'Iniciativa',
+        'pool_total': f"{reacao} + {intuicao} + 1d6", # Apenas informativo
+        'resultados': [dado],
+        'hits': total, # Na iniciativa, "Hits" é o valor total
+        'mensagem': f"VALOR FINAL: {total}",
+        'glitch': False
+    })

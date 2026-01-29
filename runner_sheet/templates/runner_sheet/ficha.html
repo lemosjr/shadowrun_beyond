@@ -25,6 +25,14 @@
                 <span class="metatipo">{{ personagem.get_metatipo_display }}</span>
             </div>
             
+            <div style="margin-top: 15px;">
+                <button class="btn-roll" 
+                        style="border-color: #ffff00; color: #ffff00;" 
+                        onclick="rolarIniciativa()">
+                    ⚡ ROLAR INICIATIVA
+                </button>
+            </div>
+            
             <div style="margin-top: 10px;">
                 <a href="{% url 'home' %}" style="color: #444; font-size: 0.8em; text-decoration: none;">[ < VOLTAR AO MENU ]</a>
             </div>
@@ -168,6 +176,6 @@
         </div>
     </div>
 
-    <script src="{% static 'runner_sheet/script.js' %}?v=6"></script>
+    <script src="{% static 'runner_sheet/script.js' %}?v=7"></script>
 </body>
 </html>
