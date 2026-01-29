@@ -3,57 +3,176 @@
 
 /* --- MONITORES DE VITALIDADE --- */
 .monitor-section {
-    background: var(--panel-bg); padding: 15px; margin-bottom: 25px;
-    border: 1px solid var(--border-dim); box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    background: linear-gradient(180deg, #161616, #0e0e0e);
+    padding: 18px;
+    margin-bottom: 30px;
+
+    border: 1px solid var(--border-dim);
+    box-shadow:
+        inset 0 0 20px rgba(0,0,0,0.6),
+        0 0 15px rgba(0,0,0,0.6);
 }
 
 .monitor-label {
-    font-size: 0.8em; color: #aaa; margin-bottom: 8px;
-    display: flex; justify-content: space-between; text-transform: uppercase; letter-spacing: 1px;
+    font-size: 0.75em;
+    color: #aaa;
+    margin-bottom: 10px;
+
+    display: flex;
+    justify-content: space-between;
+
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
-.btn-limpar { cursor: pointer; color: #555; transition: 0.2s; }
-.btn-limpar:hover { color: var(--text-main); }
+.btn-limpar {
+    cursor: pointer;
+    color: #666;
+    transition: color 0.2s, text-shadow 0.2s;
+}
 
-.track-container { display: flex; gap: 5px; flex-wrap: wrap; }
+.btn-limpar:hover {
+    color: var(--neon-pink);
+    text-shadow: 0 0 6px rgba(255,0,255,0.6);
+}
+.track-container {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
 
+/* Caixas de dano */
 .dano-box {
-    width: 25px; height: 25px; border: 1px solid #444; background: #111;
-    cursor: pointer; transition: all 0.1s;
+    width: 26px;
+    height: 26px;
+
+    border: 1px solid #444;
+    background: #0c0c0c;
+
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s, border-color 0.1s;
 }
-.dano-box:hover { border-color: #fff; transform: scale(1.1); }
-.box-fisico.filled { background-color: #ff3333; box-shadow: 0 0 8px #ff3333; border-color: #ff3333; }
-.box-stun.filled { background-color: #3333ff; box-shadow: 0 0 8px #3333ff; border-color: #3333ff; }
+
+.dano-box:hover {
+    border-color: #fff;
+    transform: scale(1.15);
+}
+
+/* Estados */
+.box-fisico.filled {
+    background: #ff3333;
+    border-color: #ff3333;
+    box-shadow:
+        0 0 8px #ff3333,
+        inset 0 0 6px rgba(0,0,0,0.5);
+}
+
+.box-stun.filled {
+    background: #3333ff;
+    border-color: #3333ff;
+    box-shadow:
+        0 0 8px #3333ff,
+        inset 0 0 6px rgba(0,0,0,0.5);
+}
 
 /* --- GRIDS DE ARMAS E ATRIBUTOS --- */
-.arsenal-grid { display: grid; gap: 10px; margin-bottom: 25px; }
+.arsenal-grid {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 30px;
+}
 
 .atributos-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
-    gap: 10px; margin-bottom: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
+    gap: 12px;
+    margin-bottom: 35px;
 }
 
+/* Caixa de atributo */
 .attr-box {
-    background: var(--panel-bg); border: 1px solid var(--border-dim);
-    padding: 10px; text-align: center; transition: 0.2s;
+    background: linear-gradient(180deg, #151515, #0d0d0d);
+    border: 1px solid var(--border-dim);
+    padding: 12px 10px;
+
+    text-align: center;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
 }
-.attr-box:hover { border-color: var(--neon-pink); background: #222; }
-.attr-val { font-size: 1.8em; font-weight: bold; color: var(--neon-pink); }
-.attr-label { font-size: 0.7em; color: #888; margin-top: 5px; }
+
+.attr-box:hover {
+    border-color: var(--neon-pink);
+    box-shadow: 0 0 15px rgba(255,0,255,0.25);
+    transform: translateY(-3px);
+}
+
+.attr-val {
+    font-size: 1.9em;
+    font-weight: bold;
+    color: var(--neon-pink);
+    text-shadow: 0 0 8px rgba(255,0,255,0.6);
+}
+
+.attr-label {
+    font-size: 0.7em;
+    color: #888;
+    margin-top: 6px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
 
 /* --- PERÍCIAS E BOTÕES INTERNOS --- */
-.section-title { color: var(--neon-cyan); border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 15px; }
+.section-title {
+    color: var(--neon-cyan);
+    font-size: 0.9em;
+
+    letter-spacing: 2px;
+    text-transform: uppercase;
+
+    border-bottom: 1px dashed #333;
+    padding-bottom: 6px;
+    margin-bottom: 18px;
+
+    text-shadow: 0 0 6px rgba(0,255,255,0.4);
+}
 
 .pericia-item {
-    background: var(--panel-bg); margin-bottom: 6px; padding: 12px;
-    display: flex; justify-content: space-between; align-items: center;
-    border-left: 3px solid transparent; transition: 0.2s;
+    background: linear-gradient(180deg, #141414, #0c0c0c);
+    margin-bottom: 8px;
+    padding: 12px 14px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    border-left: 3px solid transparent;
+    transition: background 0.2s, border-color 0.2s;
 }
-.pericia-item:hover { border-left-color: var(--neon-cyan); background: #222; }
+
+.pericia-item:hover {
+    border-left-color: var(--neon-cyan);
+    background: #1a1a1a;
+}
 
 .btn-roll {
-    background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan);
-    padding: 8px 20px; cursor: pointer; font-family: inherit; font-weight: bold;
-    text-transform: uppercase; letter-spacing: 1px;
+    background: transparent;
+    border: 1px solid var(--neon-cyan);
+    color: var(--neon-cyan);
+
+    padding: 8px 22px;
+
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: bold;
+
+    text-transform: uppercase;
+    letter-spacing: 1px;
+
+    transition: all 0.25s ease;
 }
-.btn-roll:hover { background: var(--neon-cyan); color: var(--bg-dark); box-shadow: 0 0 15px var(--neon-cyan); }
+.btn-roll:hover {
+    background: var(--neon-cyan);
+    color: var(--bg-dark);
+    box-shadow:
+        0 0 15px var(--neon-cyan),
+        0 0 30px rgba(0,255,255,0.4);
+}
