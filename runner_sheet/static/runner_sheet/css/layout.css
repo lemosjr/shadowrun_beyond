@@ -1,310 +1,111 @@
 /* --- ARQUIVO: layout.css --- */
-/* OBJETIVO: Estrutura da página, Header, Home e Console */
 
-/* --- CABEÇALHO & AVATAR --- */
+/* --- CABEÇALHO --- */
 .header-container {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    margin-bottom: 30px;
-    padding-bottom: 15px;
-
-    border-bottom: 1px solid var(--neon-pink);
-    background: linear-gradient(180deg, rgba(255,0,255,0.08), transparent);
-}
-
-.char-info { 
-    flex: 1; 
+    margin-bottom: 40px;
+    padding: 20px;
+    background: linear-gradient(90deg, rgba(0,243,255,0.1) 0%, transparent 100%);
+    border-left: 5px solid var(--neon-cyan);
+    position: relative;
 }
 
 .codinome { 
-    font-size: 2.2em; 
-    font-weight: bold;
-    letter-spacing: 2px;
-    color: var(--neon-cyan);
-    text-shadow:
-        0 0 6px var(--neon-cyan),
-        0 0 15px rgba(0,255,255,0.4);
-    display: inline-block;
-}
-
-
-.realname {
-    font-size: 0.9em;
-    color: #666;
-    margin-top: 5px;
-}
-.metatipo {
-    color: #888;
-    border: 1px solid #444;
-    padding: 2px 8px;
-    font-size: 0.8em;
-    display: inline-block;
-    margin-top: 5px;
-}
-
-/* Animação Glitch */
-@keyframes glitch-anim {
-    0% { transform: translate(0); }
-    20% { transform: translate(-2px, 1px); }
-    40% { transform: translate(2px, -1px); }
-    60% { transform: translate(-1px, -2px); }
-    80% { transform: translate(1px, 2px); }
-    100% { transform: translate(0); }
-}
-
-.codinome:hover {
-    animation: glitch-anim 0.15s steps(2, end) infinite;
+    font-size: 2.5em; 
     color: #fff;
-    text-shadow:
-        2px 0 var(--neon-pink),
-        -2px 0 var(--neon-cyan);
-    cursor: default;
+    font-weight: bold; 
+    display: inline-block;
+    text-shadow: 2px 2px 0px var(--neon-pink); /* Efeito 3D */
 }
 
+.metatipo { 
+    color: var(--neon-cyan); 
+    border: 1px solid var(--neon-cyan); 
+    padding: 4px 10px; 
+    font-size: 0.8em; 
+    background: rgba(0, 243, 255, 0.1);
+}
+
+/* Avatar Hexagonal/Cortado */
 .char-avatar-box {
-    width: 110px;
-    height: 110px;
-    margin-left: 20px;
-
-    border: 1px solid var(--neon-cyan);
+    width: 120px; height: 120px;
+    border: 2px solid var(--neon-cyan);
     background: #000;
+    margin-left: 15px;
     position: relative;
-    overflow: hidden;
-
-    box-shadow:
-        inset 0 0 20px rgba(0,255,255,0.15),
-        0 0 15px rgba(0,0,0,0.8);
-
-    background-image: repeating-linear-gradient(
-        transparent 0px,
-        transparent 2px,
-        rgba(0, 255, 255, 0.08) 3px
-    );
+    /* Corte Angular Futurista */
+    clip-path: polygon(20% 0%, 100% 0, 100% 20%, 100% 80%, 80% 100%, 0 100%, 0% 80%, 0% 20%);
 }
 
-.char-avatar-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: grayscale(90%) contrast(1.3) brightness(0.9);
+.char-avatar-img { 
+    width: 100%; height: 100%; object-fit: cover; 
+    filter: grayscale(100%) contrast(1.2); 
+    transition: 0.5s;
 }
-
-.char-avatar-box::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 0 0 15px 15px;
-    border-color: transparent transparent var(--neon-cyan) transparent;
-}
+.header-container:hover .char-avatar-img { filter: grayscale(0%); }
 
 /* --- TELA HOME (Cards) --- */
-.home-container {
-    max-width: 900px;
-    margin: 40px auto;
-    padding: 20px;
-    text-align: center;
-}
-
+.home-container { max-width: 900px; margin: 0 auto; text-align: center; }
 
 .home-title {
-    font-size: 2.4em;
-    text-align: left;
-    letter-spacing: 3px;
-
-    color: var(--neon-pink);
-    text-shadow:
-        0 0 8px var(--neon-pink),
-        0 0 20px rgba(255,0,255,0.4);
-
-    margin-bottom: 30px;
-    padding-bottom: 15px;
-    border-bottom: 1px dashed #333;
+    font-size: 3em; 
+    color: transparent;
+    -webkit-text-stroke: 1px var(--neon-pink); /* Texto vazado */
+    margin-bottom: 50px; 
+    text-shadow: 0 0 10px var(--neon-pink);
 }
 
-/* Grid de runners */
-.runners-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 35px;
-    padding: 10px;
-}
+.runners-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px; padding: 20px; }
 
-/* ============================= */
-/* ========= CARDS ============ */
-/* ============================= */
+/* CARD ESTILO "DADOS" */
 .runner-card {
-    position: relative;
+    background: var(--panel-bg);
+    border: 1px solid var(--border-dim);
     display: block;
-    background: linear-gradient(180deg, #141414, #0b0b0b);
-    border: 1px solid #222;
-    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    transition: all 0.3s;
+    position: relative;
+    /* Corte no canto superior direito */
+    clip-path: polygon(0 0, calc(100% - 30px) 0, 100% 30px, 100% 100%, 0 100%);
 }
 
-/* detalhe eletrônico */
 .runner-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 18px;
-    height: 18px;
-    border-top: 2px solid var(--neon-cyan);
-    border-right: 2px solid var(--neon-cyan);
-    opacity: 0.6;
+    /* Triângulo decorativo no canto cortado */
+    content: ''; position: absolute; top: 0; right: 0; width: 30px; height: 30px;
+    background: var(--neon-cyan); opacity: 0.5;
+    clip-path: polygon(0 0, 100% 0, 100% 100%);
 }
 
 .runner-card:hover {
-    transform: translateY(-8px) scale(1.01);
+    transform: translateY(-10px);
     border-color: var(--neon-cyan);
-    box-shadow:
-        0 0 25px rgba(0,255,255,0.25),
-        inset 0 0 10px rgba(0,255,255,0.05);
+    box-shadow: 0 10px 30px rgba(0, 243, 255, 0.1);
 }
 
-/* Imagem */
-.card-img-box {
-    height: 250px;
-    overflow: hidden;
-    background: #000;
-    border-bottom: 1px solid #222;
-    position: relative;
-}
+.card-img-box { height: 280px; overflow: hidden; background: #111; border-bottom: 2px solid var(--neon-cyan); }
+.card-img { width: 100%; height: 100%; object-fit: cover; filter: sepia(100%) hue-rotate(190deg) saturate(300%); transition: 0.4s; }
+.runner-card:hover .card-img { filter: none; }
 
-.card-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: grayscale(100%);
-    transition: filter 0.3s;
-}
+.card-info { padding: 20px; text-align: left; }
+.card-name { color: #fff; font-size: 1.6em; font-weight: bold; margin-bottom: 5px; text-transform: uppercase; }
+.card-meta { color: var(--neon-pink); font-size: 0.8em; letter-spacing: 2px; }
 
-.runner-card:hover .card-img {
-    filter: grayscale(0%);
-}
-
-/* scanner */
-.card-img-box::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-        to bottom,
-        transparent,
-        rgba(0,255,255,0.08),
-        transparent
-    );
-    opacity: 0;
-    transition: opacity 0.3s;
-}
-
-.runner-card:hover .card-img-box::after {
-    opacity: 1;
-}
-
-/* Info */
-.card-info {
-    padding: 18px;
-    background: rgba(0,0,0,0.4);
-    text-align: left;
-}
-
-.card-name {
-    color: var(--text-main);
-    font-size: 1.4em;
-    font-weight: bold;
-    letter-spacing: 1px;
-    margin-bottom: 5px;
-}
-
-.runner-card:hover .card-name {
-    color: var(--neon-cyan);
-}
-
-.card-meta {
-    color: #777;
-    font-size: 0.75em;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
-
-/* --- CONSOLE RETRÁTIL --- */
+/* --- CONSOLE --- */
 #console-log {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 200px;
-
-    background:
-        linear-gradient(180deg, rgba(255,0,255,0.05), transparent),
-        rgba(10, 10, 10, 0.98);
-
+    position: fixed; bottom: 0; left: 0; right: 0; height: 250px;
+    background: rgba(5, 5, 5, 0.95);
     border-top: 2px solid var(--neon-pink);
     transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 9999;
-
-    display: flex;
-    flex-direction: column;
+    z-index: 9999; display: flex; flex-direction: column;
+    box-shadow: 0 -5px 20px rgba(255, 0, 85, 0.2);
 }
-
-#console-log.collapsed {
-    height: 40px;
-}
+#console-log.collapsed { height: 45px; }
 
 #console-header {
-    padding: 10px 15px;
-    background: #1a1a1a;
-    border-bottom: 1px solid #333;
-    cursor: pointer;
-
-    display: flex;
-    justify-content: space-between;
-
-    font-weight: bold;
-    letter-spacing: 2px;
-    color: var(--neon-pink);
-    user-select: none;
-
-    text-shadow: 0 0 6px rgba(255,0,255,0.6);
+    padding: 12px 20px; background: #111; border-bottom: 1px solid #333;
+    cursor: pointer; display: flex; justify-content: space-between;
+    font-weight: bold; color: var(--neon-pink); letter-spacing: 2px;
 }
-
-#console-header:hover {
-    background: #252525;
-    color: #fff;
-}
-
-#console-content {
-    flex: 1;
-    overflow-y: auto;
-    padding: 10px;
-    font-size: 0.9em;
-    font-family: 'Courier New', monospace;
-    line-height: 1.4;
-}
-
-.log-entry {
-    margin-bottom: 8px;
-    border-bottom: 1px solid #222;
-    padding-bottom: 8px;
-}
-
-.log-success {
-    color: #0f0;
-    font-weight: bold;
-}
-
-.log-fail {
-    color: #f00;
-    font-weight: bold;
-}
-
-.dice-results {
-    color: #666;
-    font-size: 0.8em;
-    margin-top: 3px;
-}
+#console-header:hover { background: var(--neon-pink); color: #000; }
+#console-content { flex: 1; overflow-y: auto; padding: 15px; font-size: 0.9em; font-family: 'Courier New', monospace; }

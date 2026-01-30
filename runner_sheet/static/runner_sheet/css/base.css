@@ -1,148 +1,103 @@
 /* --- ARQUIVO: base.css --- */
-/* OBJETIVO: Variáveis globais, tipografia e elementos de formulário */
+/* OBJETIVO: Variáveis globais, atmosfera CRT e Inputs */
 
 :root {
     /* [PALETA DE CORES] */
-    --neon-pink: #ff00ff;
-    --neon-cyan: #00ffff;
+    --neon-pink: #ff0055; /* Rosa mais agressivo */
+    --neon-cyan: #00f3ff; /* Ciano elétrico */
+    --neon-yellow: #fcee0a; /* Amarelo Cyberpunk */
     
-    --bg-dark: #0a0a0a;    /* Fundo principal */
-    --panel-bg: #141414;   /* Fundo dos painéis */
-    --text-main: #e5e5e5;    /* Texto padrão */
-    --border-dim: #2a2a2a;    /* Bordas discretas */
+    --bg-dark: #050505;
+    --panel-bg: rgba(20, 20, 20, 0.7); /* Translúcido */
+    --text-main: #e0e0e0;
+    --border-dim: #333;
 }
 
-* {
-    box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
-    background:
-        radial-gradient(circle at top, #111 0%, #050505 45%, #000 100%),
-        repeating-linear-gradient(
-            to bottom,
-            rgba(0,255,255,0.03),
-            rgba(0,255,255,0.03) 1px,
-            transparent 2px,
-            transparent 4px
-        );
-
+    background-color: var(--bg-dark);
     color: var(--text-main);
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Orbitron', 'Courier New', monospace;
     margin: 0;
     padding: 20px;
     padding-bottom: 220px;
-
-    line-height: 1.6;
-    letter-spacing: 0.5px;
+    
+    /* Efeito de Grade de Fundo (Grid) */
+    background-image: 
+        linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 30px 30px;
+    min-height: 100vh;
 }
 
-
-/* ============================= */
-/* ======== TIPOGRAFIA ======== */
-/* ============================= */
-h1, h2, h3 {
-    text-transform: uppercase;
-    margin: 0;
-    letter-spacing: 2px;
-}
-
-p {
-    margin: 0 0 10px;
-}
-
-a {
-    color: inherit;
-    text-decoration: none;
-    transition: color 0.2s;
-}
-
-a:hover {
-    color: var(--neon-cyan);
-}
-
-/* Scrollbar Customizada */
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: #0d0d0d;
-}
-
-::-webkit-scrollbar-thumb {
-    background: linear-gradient(
-        180deg,
-        var(--neon-cyan),
-        #333
+/* Efeito de Scanline (TV Velha) sobre tudo */
+body::after {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.15),
+        rgba(0, 0, 0, 0.15) 1px,
+        transparent 1px,
+        transparent 2px
     );
-    border-radius: 4px;
+    pointer-events: none;
+    z-index: 99999;
 }
 
-/* ============================= */
-/* ======= FORMULÁRIOS ======= */
-/* ============================= */
+h1, h2, h3 { text-transform: uppercase; margin: 0; letter-spacing: 2px; }
+a { text-decoration: none; color: inherit; transition: 0.3s; }
+a:hover { color: var(--neon-cyan); text-shadow: 0 0 8px var(--neon-cyan); }
+
+/* Scrollbar Hacker */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #000; }
+::-webkit-scrollbar-thumb { background: var(--border-dim); border: 1px solid var(--neon-cyan); }
+
+/* --- FORMULÁRIOS ESTILIZADOS --- */
 .cyber-input {
-    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    border-bottom: 2px solid var(--border-dim);
+    color: var(--neon-cyan);
     padding: 12px;
-    margin-bottom: 15px;
-
-    background: #0d0d0d;
-    border: 1px solid var(--neon-cyan);
-    color: #fff;
-
+    width: 100%;
+    margin-bottom: 20px;
     font-family: inherit;
-    box-sizing: border-box;
-
-    transition: border-color 0.2s, box-shadow 0.2s;
+    font-size: 1em;
+    transition: 0.3s;
+    
+    /* Corte no canto do input */
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
 }
 
 .cyber-input:focus {
     outline: none;
-    border-color: var(--neon-pink);
-    box-shadow: 0 0 10px rgba(255,0,255,0.4);
+    border-bottom-color: var(--neon-pink);
+    background: rgba(255, 0, 85, 0.1);
+    padding-left: 20px; /* Animação de texto empurrando */
 }
 
-
-/* Botão principal */
 .btn-submit {
-    width: 100%;
-    padding: 12px 20px;
-
-    background: linear-gradient(
-        180deg,
-        var(--neon-pink),
-        #b300b3
-    );
-
+    background: var(--neon-cyan);
     color: #000;
     border: none;
+    padding: 15px 20px;
+    font-weight: 900;
     cursor: pointer;
-
-    font-family: inherit;
-    font-size: 1.1em;
-    font-weight: bold;
-    letter-spacing: 2px;
     text-transform: uppercase;
-
-    transition: all 0.25s ease;
+    width: 100%;
+    font-family: inherit;
+    font-size: 1.2em;
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+    transition: 0.2s;
 }
 
 .btn-submit:hover {
-    background: #fff;
-    box-shadow:
-        0 0 15px var(--neon-pink),
-        0 0 30px rgba(255,0,255,0.4);
+    background: var(--neon-pink);
+    color: #fff;
+    box-shadow: 0 0 20px var(--neon-pink);
+    transform: scale(1.02);
 }
-
-/* ============================= */
-/* ===== UTILITÁRIOS ========= */
-/* ============================= */
-.hidden {
-    display: none !important;
-}
-
-.text-dim {
-    color: #777;
-}
-

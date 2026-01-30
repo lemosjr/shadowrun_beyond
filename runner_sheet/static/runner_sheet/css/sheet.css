@@ -1,178 +1,91 @@
 /* --- ARQUIVO: sheet.css --- */
-/* OBJETIVO: Elementos específicos da Ficha de RPG (Dano, Armas, Skills) */
 
 /* --- MONITORES DE VITALIDADE --- */
 .monitor-section {
-    background: linear-gradient(180deg, #161616, #0e0e0e);
-    padding: 18px;
-    margin-bottom: 30px;
-
+    background: rgba(0,0,0,0.3);
+    padding: 20px; margin-bottom: 30px;
     border: 1px solid var(--border-dim);
-    box-shadow:
-        inset 0 0 20px rgba(0,0,0,0.6),
-        0 0 15px rgba(0,0,0,0.6);
+    position: relative;
+}
+/* Linha decorativa no topo */
+.monitor-section::before {
+    content: ''; position: absolute; top: -1px; left: 0; width: 50px; height: 3px; background: var(--neon-cyan);
 }
 
 .monitor-label {
-    font-size: 0.75em;
-    color: #aaa;
-    margin-bottom: 10px;
-
-    display: flex;
-    justify-content: space-between;
-
-    text-transform: uppercase;
-    letter-spacing: 2px;
+    font-size: 0.9em; color: var(--neon-cyan); margin-bottom: 10px;
+    display: flex; justify-content: space-between; text-transform: uppercase;
 }
 
-.btn-limpar {
-    cursor: pointer;
-    color: #666;
-    transition: color 0.2s, text-shadow 0.2s;
-}
+.track-container { display: flex; gap: 8px; flex-wrap: wrap; }
 
-.btn-limpar:hover {
-    color: var(--neon-pink);
-    text-shadow: 0 0 6px rgba(255,0,255,0.6);
-}
-.track-container {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-}
-
-/* Caixas de dano */
 .dano-box {
-    width: 26px;
-    height: 26px;
-
-    border: 1px solid #444;
-    background: #0c0c0c;
-
-    cursor: pointer;
-    transition: transform 0.1s, box-shadow 0.1s, border-color 0.1s;
+    width: 25px; height: 40px; /* Mais alto, estilo barra de bateria */
+    border: 1px solid #333;
+    background: #0a0a0a;
+    cursor: pointer; transition: 0.1s;
+    /* Leve inclinação para estilo speed */
+    transform: skewX(-10deg);
 }
 
-.dano-box:hover {
-    border-color: #fff;
-    transform: scale(1.15);
+.box-fisico.filled { 
+    background-color: var(--neon-pink); 
+    box-shadow: 0 0 10px var(--neon-pink); 
+    border-color: var(--neon-pink); 
+}
+.box-stun.filled { 
+    background-color: #0055ff; 
+    box-shadow: 0 0 10px #0055ff; 
+    border-color: #0055ff; 
 }
 
-/* Estados */
-.box-fisico.filled {
-    background: #ff3333;
-    border-color: #ff3333;
-    box-shadow:
-        0 0 8px #ff3333,
-        inset 0 0 6px rgba(0,0,0,0.5);
-}
-
-.box-stun.filled {
-    background: #3333ff;
-    border-color: #3333ff;
-    box-shadow:
-        0 0 8px #3333ff,
-        inset 0 0 6px rgba(0,0,0,0.5);
-}
-
-/* --- GRIDS DE ARMAS E ATRIBUTOS --- */
-.arsenal-grid {
-    display: grid;
-    gap: 12px;
-    margin-bottom: 30px;
-}
-
+/* --- ATRIBUTOS --- */
 .atributos-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
-    gap: 12px;
-    margin-bottom: 35px;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 15px; margin-bottom: 40px;
 }
 
-/* Caixa de atributo */
 .attr-box {
-    background: linear-gradient(180deg, #151515, #0d0d0d);
-    border: 1px solid var(--border-dim);
-    padding: 12px 10px;
-
-    text-align: center;
-    transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+    background: #080808; 
+    border: 1px solid #333;
+    padding: 15px 5px; text-align: center;
+    transition: 0.3s;
+    clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px); /* Canto cortado */
 }
-
-.attr-box:hover {
-    border-color: var(--neon-pink);
-    box-shadow: 0 0 15px rgba(255,0,255,0.25);
-    transform: translateY(-3px);
+.attr-box:hover { 
+    border-color: var(--neon-cyan); 
+    box-shadow: inset 0 0 15px rgba(0, 243, 255, 0.2); 
+    transform: translateY(-5px);
 }
+.attr-val { font-size: 2em; font-weight: bold; color: #fff; text-shadow: 0 0 5px rgba(255,255,255,0.5); }
+.attr-label { font-size: 0.7em; color: var(--neon-cyan); margin-top: 5px; letter-spacing: 1px; }
 
-.attr-val {
-    font-size: 1.9em;
-    font-weight: bold;
-    color: var(--neon-pink);
-    text-shadow: 0 0 8px rgba(255,0,255,0.6);
-}
-
-.attr-label {
-    font-size: 0.7em;
-    color: #888;
-    margin-top: 6px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
-
-/* --- PERÍCIAS E BOTÕES INTERNOS --- */
-.section-title {
-    color: var(--neon-cyan);
-    font-size: 0.9em;
-
-    letter-spacing: 2px;
-    text-transform: uppercase;
-
-    border-bottom: 1px dashed #333;
-    padding-bottom: 6px;
-    margin-bottom: 18px;
-
-    text-shadow: 0 0 6px rgba(0,255,255,0.4);
+/* --- LISTAS E BOTÕES --- */
+.section-title { 
+    color: #fff; border-bottom: 2px solid var(--neon-cyan); 
+    padding-bottom: 10px; margin-bottom: 20px; 
+    display: inline-block; padding-right: 50px;
 }
 
 .pericia-item {
-    background: linear-gradient(180deg, #141414, #0c0c0c);
-    margin-bottom: 8px;
-    padding: 12px 14px;
-
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    border-left: 3px solid transparent;
-    transition: background 0.2s, border-color 0.2s;
+    background: linear-gradient(90deg, #111 0%, transparent 100%);
+    margin-bottom: 10px; padding: 15px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-left: 3px solid #333; transition: 0.2s;
 }
-
-.pericia-item:hover {
-    border-left-color: var(--neon-cyan);
-    background: #1a1a1a;
-}
+.pericia-item:hover { border-left-color: var(--neon-pink); background: #1a1a1a; }
 
 .btn-roll {
     background: transparent;
     border: 1px solid var(--neon-cyan);
     color: var(--neon-cyan);
-
-    padding: 8px 22px;
-
+    padding: 8px 25px;
     cursor: pointer;
-    font-family: inherit;
-    font-weight: bold;
-
-    text-transform: uppercase;
-    letter-spacing: 1px;
-
-    transition: all 0.25s ease;
+    font-family: inherit; font-weight: bold; text-transform: uppercase;
+    position: relative; overflow: hidden; transition: 0.3s;
 }
+
 .btn-roll:hover {
-    background: var(--neon-cyan);
-    color: var(--bg-dark);
-    box-shadow:
-        0 0 15px var(--neon-cyan),
-        0 0 30px rgba(0,255,255,0.4);
+    background: var(--neon-cyan); color: #000;
+    box-shadow: 0 0 15px var(--neon-cyan);
 }
