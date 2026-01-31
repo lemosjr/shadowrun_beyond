@@ -4,180 +4,277 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SHADOWRUN BEYOND</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <title>NOVO OPERATIVO // WIZARD</title>
     
     <link rel="stylesheet" href="{% static 'runner_sheet/css/base.css' %}">
-    
     <link rel="stylesheet" href="{% static 'runner_sheet/css/layout.css' %}">
-    
-    <link rel="stylesheet" href="{% static 'runner_sheet/css/sheet.css' %}">
+    <link rel="stylesheet" href="{% static 'runner_sheet/css/wizard.css' %}">
 </head>
+<body>
 
-<body data-id="{{ personagem.id }}" 
-      data-fisico="{{ personagem.dano_fisico }}" 
-      data-stun="{{ personagem.dano_atordoamento }}">
+    <h2 class="home-title" style="text-align: center; border: none; margin-bottom: 10px;">>> PROTOCOLO DE GÊNESE <<</h2>
 
-    <div class="header-container">
-        <div class="char-info">
-            <div class="codinome">{{ personagem.codinome }}</div>
-            <div class="realname">{{ personagem.nome }}</div>
-            <div style="margin-top: 5px;">
-                <span class="metatipo">{{ personagem.get_metatipo_display }}</span>
-            </div>
+    <form method="post" enctype="multipart/form-data" id="wizard-form">
+        {% csrf_token %}
+        
+        <div class="wizard-container">
             
-            <div style="margin-top: 15px;">
-                <button class="btn-roll" 
-                        style="border-color: #ffff00; color: #ffff00;" 
-                        onclick="rolarIniciativa()">
-                    ⚡ ROLAR INICIATIVA
-                </button>
-            </div>
-            
-            <div style="margin-top: 10px;">
-                <a href="{% url 'home' %}" style="color: #444; font-size: 0.8em; text-decoration: none;">[ < VOLTAR AO MENU ]</a>
-            </div>
-        </div>
-        
-        <div class="char-avatar-box">
-            {% if personagem.foto %}
-                <img src="{{ personagem.foto.url }}" class="char-avatar-img" alt="Avatar">
-            {% else %}
-                <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#333; font-size:2em;">?</div>
-            {% endif %}
-        </div>
-    </div>
+            <div class="wizard-main">
+                
+                <div class="progress-bar">
+                    <div class="step-indicator active" id="p1"></div>
+                    <div class="step-indicator" id="p2"></div>
+                    <div class="step-indicator" id="p3"></div>
+                    <div class="step-indicator" id="p4"></div>
+                </div>
 
-    <div class="monitor-section">
-        
-        <div class="monitor-label">
-            <span>MONITOR FÍSICO (Máx: {{ personagem.max_fisico }})</span>
-            <span class="btn-limpar" onclick="setDano('fisico', 0)">[RESETAR]</span>
-        </div>
-        <div class="track-container" id="track-fisico">
-            {% for i in range_fisico %}
-                <div class="dano-box box-fisico" data-index="{{ i }}" onclick="setDano('fisico', {{ i }})"></div>
-            {% endfor %}
-        </div>
-        <br>
-        
-        <div class="monitor-label">
-            <span>MONITOR STUN (Máx: {{ personagem.max_stun }})</span>
-            <span class="btn-limpar" onclick="setDano('stun', 0)">[RESETAR]</span>
-        </div>
-        <div class="track-container" id="track-stun">
-            {% for i in range_stun %}
-                <div class="dano-box box-stun" data-index="{{ i }}" onclick="setDano('stun', {{ i }})"></div>
-            {% endfor %}
-        </div>
-    </div>
+                <div class="step-content active" id="step1">
+                    <h3 style="color:#fff; border-bottom:1px solid #444; padding-bottom:10px; margin-bottom:20px;">1. IDENTIDADE & ORIGEM</h3>
+                    
+                    <div onmouseenter="updateGuide('conceito')">
+                        {{ form.nome.label_tag }} {{ form.nome }}
+                        {{ form.codinome.label_tag }} {{ form.codinome }}
+                    </div>
 
-    <h3 class="section-title">
-        Arsenal 
-        <button onclick="document.getElementById('form-add-arma').style.display='block'" 
-                style="float:right; background:none; border:none; color:var(--neon-cyan); cursor:pointer; font-family:inherit; font-weight:bold;">
-            [+ ADICIONAR]
-        </button>
-    </h3>
+                    <div class="grid-2">
+                        <div onmouseenter="updateGuide('metatipo')">
+                            {{ form.metatipo.label_tag }} {{ form.metatipo }}
+                        </div>
+                        <div onmouseenter="updateGuide('arquetipo')">
+                            {{ form.arquetipo.label_tag }} {{ form.arquetipo }}
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px;" onmouseenter="updateGuide('foto')">
+                        <label>ARQUIVO DE IMAGEM (AVATAR)</label>
+                        {{ form.foto }}
+                    </div>
+                </div>
 
-    <div id="form-add-arma" style="display:none; background:#151515; padding:15px; margin-bottom:15px; border:1px solid var(--neon-cyan);">
-        <h4 style="color:#fff; margin-top:0;">Nova Arma</h4>
-        <form action="{% url 'add_arma' personagem.id %}" method="post">
-            {% csrf_token %}
-            {{ form_arma.as_p }}
-            <div style="display:flex; gap:10px; margin-top:10px;">
-                <button type="submit" class="btn-roll" style="flex:1;">SALVAR</button>
-                <button type="button" class="btn-roll" style="border-color:#555; color:#888; flex:1;" 
-                        onclick="document.getElementById('form-add-arma').style.display='none'">CANCELAR</button>
-            </div>
-        </form>
-    </div>
+                <div class="step-content" id="step2">
+                    <h3 style="color:#fff; border-bottom:1px solid #444; padding-bottom:10px; margin-bottom:20px;">2. CALIBRAÇÃO DE ATRIBUTOS</h3>
+                    <p style="color:#888; font-size:0.8em; margin-bottom:20px;">Selecione o nível de 1 a 6 (Padrão Humano). Acima de 6 apenas para Metatipos especiais.</p>
+                    
+                    <div class="grid-2">
+                        <div onmouseenter="updateGuide('fisicos')" style="background:rgba(255,0,0,0.05); padding:10px; border:1px solid #333;">
+                            <strong style="color:var(--neon-pink); display:block; margin-bottom:10px;">FÍSICOS</strong>
+                            {{ form.attr_corpo.label_tag }} {{ form.attr_corpo }}
+                            {{ form.attr_agilidade.label_tag }} {{ form.attr_agilidade }}
+                            {{ form.attr_reacao.label_tag }} {{ form.attr_reacao }}
+                            {{ form.attr_forca.label_tag }} {{ form.attr_forca }}
+                        </div>
 
-    <div class="arsenal-grid">
-        {% for arma in personagem.armas.all %}
-        <div class="pericia-item" style="border-left-color: #ff3333;">
-            <div style="flex: 1;">
-                <div style="font-weight: bold; font-size: 1.1em; color: #fff;">{{ arma.nome }}</div>
-                <div style="font-size: 0.8em; color: #888;">
-                    Dano: <span style="color: #ff3333;">{{ arma.dano }}</span> | 
-                    AP: {{ arma.ap }} | 
-                    Usa: {{ arma.pericia_associada.nome }}
+                        <div onmouseenter="updateGuide('mentais')" style="background:rgba(0,0,255,0.05); padding:10px; border:1px solid #333;">
+                            <strong style="color:var(--neon-cyan); display:block; margin-bottom:10px;">MENTAIS</strong>
+                            {{ form.attr_vontade.label_tag }} {{ form.attr_vontade }}
+                            {{ form.attr_logica.label_tag }} {{ form.attr_logica }}
+                            {{ form.attr_intuicao.label_tag }} {{ form.attr_intuicao }}
+                            {{ form.attr_carisma.label_tag }} {{ form.attr_carisma }}
+                        </div>
+                    </div>
+
+                    <div style="margin-top:20px; border-top:1px dashed #333; padding-top:15px;" onmouseenter="updateGuide('especiais')">
+                        <strong style="color:var(--neon-yellow)">ESPECIAIS</strong>
+                        <div class="grid-2">
+                            <div>{{ form.attr_trunfo.label_tag }} {{ form.attr_trunfo }}</div>
+                            <div>{{ form.attr_magia.label_tag }} {{ form.attr_magia }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-content" id="step3">
+                    <h3 style="color:#fff; border-bottom:1px solid #444; padding-bottom:10px; margin-bottom:20px;">3. PACOTE DE HABILIDADES</h3>
+                    <p style="color:#888; font-size:0.8em; margin-bottom:20px;">Selecione suas 4 competências principais.</p>
+                    
+                    <div onmouseenter="updateGuide('pericias')">
+                        <div style="display:flex; gap:10px; align-items:flex-end;">
+                            <div style="flex:3">{{ form.skill_1.label_tag }} {{ form.skill_1 }}</div>
+                            <div style="flex:1">{{ form.skill_val_1.label_tag }} {{ form.skill_val_1 }}</div>
+                        </div>
+                        
+                        <div style="display:flex; gap:10px; align-items:flex-end;">
+                            <div style="flex:3">{{ form.skill_2.label_tag }} {{ form.skill_2 }}</div>
+                            <div style="flex:1">{{ form.skill_val_2.label_tag }} {{ form.skill_val_2 }}</div>
+                        </div>
+                        
+                        <div style="display:flex; gap:10px; align-items:flex-end;">
+                            <div style="flex:3">{{ form.skill_3.label_tag }} {{ form.skill_3 }}</div>
+                            <div style="flex:1">{{ form.skill_val_3.label_tag }} {{ form.skill_val_3 }}</div>
+                        </div>
+
+                        <div style="display:flex; gap:10px; align-items:flex-end;">
+                            <div style="flex:3">{{ form.skill_4.label_tag }} {{ form.skill_4 }}</div>
+                            <div style="flex:1">{{ form.skill_val_4.label_tag }} {{ form.skill_val_4 }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-content" id="step4">
+                    <h3 style="color:#fff; border-bottom:1px solid #444; padding-bottom:10px; margin-bottom:20px;">4. LOGÍSTICA & ARSENAL</h3>
+                    
+                    <div class="grid-2" style="margin-bottom:30px;">
+                        <div onmouseenter="updateGuide('lifestyle')">
+                            {{ form.estilo_vida.label_tag }}
+                            {{ form.estilo_vida }}
+                        </div>
+                        <div onmouseenter="updateGuide('nuyen')">
+                            {{ form.nuyen_inicial.label_tag }}
+                            {{ form.nuyen_inicial }}
+                        </div>
+                    </div>
+                    
+                    <div style="background:rgba(255,255,255,0.05); padding:15px; border:1px solid var(--neon-cyan);">
+                        <h4 style="color:var(--neon-cyan); margin-bottom:15px;">KIT INICIAL (CORTESIA DO FIXER)</h4>
+                        
+                        <div class="grid-2">
+                            <div onmouseenter="updateGuide('arma')">
+                                {{ form.starter_arma.label_tag }}
+                                {{ form.starter_arma }}
+                            </div>
+                            <div onmouseenter="updateGuide('armadura')">
+                                {{ form.starter_armadura.label_tag }}
+                                {{ form.starter_armadura }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 40px; text-align: center;">
+                        <p style="color:var(--neon-pink); font-weight:bold; letter-spacing:2px; animation: blink 1s infinite;">>> SISTEMA PRONTO PARA COMPILAÇÃO <<</p>
+                        <button type="submit" class="btn-submit" style="font-size:1.3em; padding:20px;">INICIAR RUNNER</button>
+                    </div>
+                </div>
+
+                <div class="control-buttons">
+                    <button type="button" class="btn-roll" id="btn-prev" onclick="changeStep(-1)" style="visibility:hidden; border-color:#555; color:#777;"> < VOLTAR</button>
+                    <button type="button" class="btn-roll" id="btn-next" onclick="changeStep(1)">PRÓXIMO ></button>
                 </div>
             </div>
-            <button class="btn-roll" 
-                    style="border-color: #ff3333; color: #ff3333;"
-                    onclick="rolarDados({{ arma.pericia_associada.id }}, '{{ arma.nome|escapejs }}')">
-                ATIRAR
-            </button>
-        </div>
-        {% empty %}
-        <div style="color: #444; font-style: italic; margin-bottom: 20px;">Nenhuma arma linkada.</div>
-        {% endfor %}
-    </div>
 
-    <h3 class="section-title">Atributos</h3>
-    <div class="atributos-grid">
-        {% for attr in personagem.atributos.all %}
-        <div class="attr-box" 
-             style="cursor: pointer;" 
-             onclick="rolarAtributo({{ attr.id }}, '{{ attr.nome }}')"
-             title="Clique para rolar teste de {{ attr.nome }}">
-             
-            <div class="attr-val">{{ attr.valor }}</div>
-            <div class="attr-label">{{ attr.nome }}</div>
-        </div>
-        {% endfor %}
-    </div>
-
-    <h3 class="section-title">
-        Programas & Perícias
-        <button onclick="document.getElementById('form-add-pericia').style.display='block'" 
-                style="float:right; background:none; border:none; color:var(--neon-cyan); cursor:pointer; font-family:inherit; font-weight:bold;">
-            [+ ADICIONAR]
-        </button>
-    </h3>
-
-    <div id="form-add-pericia" style="display:none; background:#151515; padding:15px; margin-bottom:15px; border:1px solid var(--neon-cyan);">
-        <h4 style="color:#fff; margin-top:0;">Instalar Perícia</h4>
-        <form action="{% url 'add_pericia' personagem.id %}" method="post">
-            {% csrf_token %}
-            {{ form_pericia.as_p }}
-            <div style="display:flex; gap:10px; margin-top:10px;">
-                <button type="submit" class="btn-roll" style="flex:1;">INSTALAR</button>
-                <button type="button" class="btn-roll" style="border-color:#555; color:#888; flex:1;" 
-                        onclick="document.getElementById('form-add-pericia').style.display='none'">CANCELAR</button>
+            <div class="wizard-sidebar">
+                <div id="guide-content">
+                    <div class="guide-title">BEM-VINDO AO NEXUS</div>
+                    <div class="guide-text">
+                        Inicializando protocolo de criação de Operativo (Shadowrun 6ª Edição).
+                        <br><br>
+                        Passe o mouse sobre os campos à esquerda para acessar o banco de dados de regras.
+                    </div>
+                </div>
             </div>
-        </form>
-    </div>
-
-    <div id="pericias-list">
-        {% for pericia in personagem.pericias.all %}
-        <div class="pericia-item">
-            <div>
-                <strong style="font-size: 1.1em;">{{ pericia.nome }}</strong> 
-                <span style="color:#555; margin-left: 5px;">[{{ pericia.atributo_base }}]</span>
-                <span style="color:var(--neon-pink); font-weight:bold; font-size:0.9em; margin-left:5px;"> :: {{ pericia.pontos }}</span>
-            </div>
-            <button class="btn-roll" onclick="rolarDados({{ pericia.id }})">EXECUTAR</button>
         </div>
-        {% empty %}
-        <div style="color: #666; padding: 20px;">Nenhuma perícia instalada.</div>
-        {% endfor %}
-    </div>
+    </form>
 
-    <div id="console-log" class="collapsed">
-        <div id="console-header" onclick="toggleConsole()">
-            <span>>> TERMINAL DE DADOS</span>
-            <span id="btn-toggle-console">[ MAXIMIZAR ]</span>
-        </div>
-        <div id="console-content">
-            <div style="color: var(--neon-pink)">>> SISTEMA INICIADO...</div>
-            <div style="color: var(--neon-cyan)">>> CONECTADO: {{ personagem.codinome }}</div>
-            <br>
-        </div>
-    </div>
+    <script>
+        let currentStep = 1;
+        const totalSteps = 4;
 
-    <script src="{% static 'runner_sheet/script.js' %}?v=7"></script>
+        // --- BANCO DE DADOS DE AJUDA ---
+        const guideData = {
+            'conceito': {
+                title: 'IDENTIDADE',
+                text: '<strong>Codinome:</strong> Seu nome nas ruas. Nunca use seu nome real.<br><strong>Nome Real:</strong> Seu nome no SIN (se tiver um).'
+            },
+            'metatipo': {
+                title: 'METATIPO',
+                text: 'Sua biologia define seus limites.<br><br><strong>Humano:</strong> Médio, ganha mais Trunfo (Edge).<br><strong>Elfo:</strong> Ágil (+1) e Carismático (+2).<br><strong>Ork:</strong> Forte (+2) e Resistente (+3).<br><strong>Troll:</strong> Tanque vivo (Força/Corpo +4).'
+            },
+            'arquetipo': {
+                title: 'ARQUÉTIPO',
+                text: 'Seu papel tático:<br><strong>Samurai:</strong> O músculo do time.<br><strong>Mago:</strong> Apoio mágico e artilharia.<br><strong>Decker:</strong> Especialista em Matrix/Computadores.<br><strong>Face:</strong> Especialista social e infiltrador.'
+            },
+            'foto': {
+                title: 'AVATAR',
+                text: 'A imagem que aparecerá no seu Commlink e Ficha.'
+            },
+            'fisicos': {
+                title: 'ATRIBUTOS FÍSICOS',
+                text: '<strong>CORPO:</strong> Vida e resistência a dano.<br><strong>AGILIDADE:</strong> Mira, pilotagem e furtividade.<br><strong>REAÇÃO:</strong> Iniciativa e esquiva.<br><strong>FORÇA:</strong> Dano corpo a corpo e capacidade de carga.'
+            },
+            'mentais': {
+                title: 'ATRIBUTOS MENTAIS',
+                text: '<strong>VONTADE:</strong> Resistência a magia e monitor de atordoamento.<br><strong>LÓGICA:</strong> Hacking, medicina e engenharia.<br><strong>INTUIÇÃO:</strong> Percepção e Iniciativa.<br><strong>CARISMA:</strong> Influência social.'
+            },
+            'especiais': {
+                title: 'ATRIBUTOS ESPECIAIS',
+                text: '<strong>TRUNFO (EDGE):</strong> Sua sorte. Use para rolar dados extras ou fazer manobras.<br><strong>MÁGICA:</strong> Necessário para conjurar. Se for 0, você é mundano.'
+            },
+            'pericias': {
+                title: 'PERÍCIAS',
+                text: 'O que você treinou:<br><strong>Armas de Fogo:</strong> Pistolas, Fuzis.<br><strong>Furtividade:</strong> Esgueirar-se.<br><strong>Influência:</strong> Negociação.<br><strong>Cracking:</strong> Hacking.'
+            },
+            'lifestyle': {
+                title: 'ESTILO DE VIDA',
+                text: 'Onde você mora:<br><strong>Rua:</strong> Sem teto.<br><strong>Baixo:</strong> Apartamento perigoso.<br><strong>Médio:</strong> Seguro e confortável.'
+            },
+            'nuyen': {
+                title: 'RECURSOS (¥)',
+                text: 'Dinheiro inicial para gastar depois.'
+            },
+            'arma': {
+                title: 'ARMA PRIMÁRIA',
+                text: '<strong>Predator VI:</strong> O padrão da indústria. Confiável.<br><strong>Katana:</strong> Para trabalho silencioso.<br><strong>Taser:</strong> Para capturar alvos vivos (dano não-letal).'
+            },
+            'armadura': {
+                title: 'PROTEÇÃO',
+                text: 'Aumenta sua Defesa.<br><strong>Jaqueta Blindada:</strong> O melhor custo-benefício (+4 Defesa).'
+            }
+        };
+
+        // Função para atualizar o texto do guia
+        function updateGuide(key) {
+            const guide = document.getElementById('guide-content');
+            if(guideData[key]) {
+                guide.innerHTML = `
+                    <div class="guide-title">${guideData[key].title}</div>
+                    <div class="guide-text">${guideData[key].text}</div>
+                `;
+            }
+        }
+
+        // Navegação entre passos
+        function changeStep(dir) {
+            // Esconde atual
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            
+            currentStep += dir;
+            
+            // Limites de segurança
+            if(currentStep < 1) currentStep = 1;
+            if(currentStep > totalSteps) currentStep = totalSteps;
+
+            // Mostra novo
+            document.getElementById(`step${currentStep}`).classList.add('active');
+            
+            // Atualiza barra de progresso
+            updateProgressBar();
+            
+            // Lógica dos Botões
+            const btnPrev = document.getElementById('btn-prev');
+            const btnNext = document.getElementById('btn-next');
+
+            // Botão Voltar
+            btnPrev.style.visibility = currentStep === 1 ? 'hidden' : 'visible';
+            
+            // Botão Próximo (Some no último passo, pois lá tem o Submit)
+            if(currentStep === totalSteps) {
+                btnNext.style.display = 'none';
+            } else {
+                btnNext.style.display = 'block';
+                btnNext.innerText = 'PRÓXIMO >';
+            }
+        }
+
+        function updateProgressBar() {
+            for(let i=1; i<=totalSteps; i++) {
+                const el = document.getElementById(`p${i}`);
+                if(i < currentStep) {
+                    el.className = 'step-indicator completed';
+                } else if (i === currentStep) {
+                    el.className = 'step-indicator active';
+                } else {
+                    el.className = 'step-indicator';
+                }
+            }
+        }
+    </script>
 </body>
 </html>

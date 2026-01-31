@@ -1,15 +1,13 @@
-/* --- ARQUIVO: base.css --- */
-/* OBJETIVO: Variáveis globais, atmosfera CRT e Inputs */
+/* --- ARQUIVO: base.css (ATUALIZADO V2) --- */
 
 :root {
-    /* [PALETA DE CORES] */
-    --neon-pink: #ff0055; /* Rosa mais agressivo */
-    --neon-cyan: #00f3ff; /* Ciano elétrico */
-    --neon-yellow: #fcee0a; /* Amarelo Cyberpunk */
-    
+    --neon-pink: #ff0055;
+    --neon-cyan: #00f3ff;
+    --neon-yellow: #fcee0a;
     --bg-dark: #050505;
-    --panel-bg: rgba(20, 20, 20, 0.7); /* Translúcido */
+    --panel-bg: #0f0f0f;
     --text-main: #e0e0e0;
+    --text-dim: #888;
     --border-dim: #333;
 }
 
@@ -23,81 +21,80 @@ body {
     padding: 20px;
     padding-bottom: 220px;
     
-    /* Efeito de Grade de Fundo (Grid) */
+    /* Grid de fundo sutil */
     background-image: 
-        linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
-    background-size: 30px 30px;
-    min-height: 100vh;
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
 }
 
-/* Efeito de Scanline (TV Velha) sobre tudo */
-body::after {
-    content: "";
-    position: fixed;
-    top: 0; left: 0; width: 100vw; height: 100vh;
-    background: repeating-linear-gradient(
-        0deg,
-        rgba(0, 0, 0, 0.15),
-        rgba(0, 0, 0, 0.15) 1px,
-        transparent 1px,
-        transparent 2px
-    );
-    pointer-events: none;
-    z-index: 99999;
-}
-
-h1, h2, h3 { text-transform: uppercase; margin: 0; letter-spacing: 2px; }
-a { text-decoration: none; color: inherit; transition: 0.3s; }
-a:hover { color: var(--neon-cyan); text-shadow: 0 0 8px var(--neon-cyan); }
-
-/* Scrollbar Hacker */
-::-webkit-scrollbar { width: 6px; }
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: #000; }
-::-webkit-scrollbar-thumb { background: var(--border-dim); border: 1px solid var(--neon-cyan); }
+::-webkit-scrollbar-thumb { background: #333; border: 1px solid var(--neon-cyan); }
 
-/* --- FORMULÁRIOS ESTILIZADOS --- */
+/* --- FORMULÁRIOS & DROPDOWNS (CORREÇÃO DE VISIBILIDADE) --- */
+
+/* Input de Texto e Número */
 .cyber-input {
-    background: rgba(0, 0, 0, 0.5);
-    border: none;
-    border-bottom: 2px solid var(--border-dim);
-    color: var(--neon-cyan);
+    background: #000;
+    border: 1px solid var(--border-dim);
+    border-left: 3px solid var(--border-dim);
+    color: #fff;
     padding: 12px;
     width: 100%;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     font-family: inherit;
     font-size: 1em;
     transition: 0.3s;
-    
-    /* Corte no canto do input */
-    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
 }
 
 .cyber-input:focus {
     outline: none;
-    border-bottom-color: var(--neon-pink);
-    background: rgba(255, 0, 85, 0.1);
-    padding-left: 20px; /* Animação de texto empurrando */
+    border-color: var(--neon-cyan);
+    border-left-color: var(--neon-cyan);
+    box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
 }
 
+/* CORREÇÃO DO DROPDOWN (SELECT) */
+select.cyber-input {
+    appearance: none; /* Remove a seta padrão feia do navegador */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    
+    background-color: #000;
+    color: var(--neon-cyan); /* Texto neon para leitura fácil */
+    cursor: pointer;
+    
+    /* Adiciona uma setinha personalizada feita com CSS */
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2300ffff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px top 50%;
+    background-size: 12px auto;
+    padding-right: 30px;
+}
+
+/* Cor das opções quando abre a lista (para não ficar branco) */
+select.cyber-input option {
+    background-color: #000;
+    color: #fff;
+    padding: 10px;
+}
+
+/* Botões */
 .btn-submit {
     background: var(--neon-cyan);
     color: #000;
     border: none;
-    padding: 15px 20px;
-    font-weight: 900;
-    cursor: pointer;
+    padding: 15px;
+    font-weight: bold;
     text-transform: uppercase;
     width: 100%;
-    font-family: inherit;
-    font-size: 1.2em;
-    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+    cursor: pointer;
     transition: 0.2s;
+    letter-spacing: 2px;
 }
-
 .btn-submit:hover {
-    background: var(--neon-pink);
-    color: #fff;
-    box-shadow: 0 0 20px var(--neon-pink);
-    transform: scale(1.02);
+    background: #fff;
+    box-shadow: 0 0 15px var(--neon-cyan);
 }

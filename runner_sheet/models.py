@@ -23,10 +23,21 @@ class Personagem(models.Model):
         ('ADE', 'Adepto (Combate Mágico)'),
     ]
 
+    # Estilo de vida
+    ESTILOS_VIDA = [
+        ('RUA', 'Rua (Custo: 0¥) - Sem teto, perigoso.'),
+        ('FUV', 'Favelado (Custo: 500¥) - Squatter, caixas ou contêineres.'),
+        ('BAI', 'Baixo (Custo: 2.000¥) - Apartamento simples, comida barata.'),
+        ('MED', 'Médio (Custo: 5.000¥) - Confortável, seguro.'),
+        ('ALT', 'Alto (Custo: 10.000¥) - Luxo moderado, boa segurança.'),
+        ('LUX', 'Luxo (Custo: 100.000¥+) - Elite corporativa.'),
+    ]
+
     nome = models.CharField(max_length=100)
     codinome = models.CharField(max_length=100)
     metatipo = models.CharField(max_length=3, choices=METATIPOS, default='HUM')
     arquetipo = models.CharField(max_length=3, choices=ARQUETIPOS, default='SAM', help_text="Define o estilo de jogo")
+    estilo_vida = models.CharField(max_length=3, choices=ESTILOS_VIDA, default='MED')
     
     foto = models.ImageField(upload_to='runners_avatars/', blank=True, null=True)
     

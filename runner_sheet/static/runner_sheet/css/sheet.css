@@ -1,91 +1,79 @@
-/* --- ARQUIVO: sheet.css --- */
+/* --- ARQUIVO: sheet.css (VERSÃO CLASSIC REMASTER) --- */
 
-/* --- MONITORES DE VITALIDADE --- */
-.monitor-section {
-    background: rgba(0,0,0,0.3);
-    padding: 20px; margin-bottom: 30px;
+/* --- ESTRUTURA GERAL --- */
+.section-title {
+    color: var(--neon-cyan);
+    font-size: 1.2em;
+    border-bottom: 2px solid #333;
+    padding-bottom: 5px;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-add {
+    background: none; border: 1px solid var(--neon-cyan); color: var(--neon-cyan);
+    cursor: pointer; width: 30px; height: 30px; line-height: 28px; text-align: center;
+    font-weight: bold; transition: 0.2s;
+}
+.btn-add:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 10px var(--neon-cyan); }
+
+/* --- BARRA DE STATUS (Topo) --- */
+.status-bar {
+    display: flex; justify-content: space-around;
     border: 1px solid var(--border-dim);
-    position: relative;
+    background: #000;
+    padding: 15px; margin-bottom: 30px;
 }
-/* Linha decorativa no topo */
-.monitor-section::before {
-    content: ''; position: absolute; top: -1px; left: 0; width: 50px; height: 3px; background: var(--neon-cyan);
-}
+.status-box { text-align: center; }
+.status-val { font-size: 2em; font-weight: bold; color: #fff; text-shadow: 0 0 5px var(--neon-pink); }
+.status-label { font-size: 0.7em; color: #666; letter-spacing: 2px; text-transform: uppercase; margin-top: 5px; }
 
-.monitor-label {
-    font-size: 0.9em; color: var(--neon-cyan); margin-bottom: 10px;
-    display: flex; justify-content: space-between; text-transform: uppercase;
+/* --- MONITORES (Vitalidade) --- */
+.monitor-section {
+    background: #080808; border: 1px solid #222; padding: 20px; margin-bottom: 30px;
 }
-
-.track-container { display: flex; gap: 8px; flex-wrap: wrap; }
+.monitor-header { display: flex; justify-content: space-between; color: #888; font-size: 0.8em; margin-bottom: 10px; text-transform: uppercase; }
+.track-container { display: flex; gap: 5px; flex-wrap: wrap; }
 
 .dano-box {
-    width: 25px; height: 40px; /* Mais alto, estilo barra de bateria */
-    border: 1px solid #333;
-    background: #0a0a0a;
-    cursor: pointer; transition: 0.1s;
-    /* Leve inclinação para estilo speed */
-    transform: skewX(-10deg);
+    width: 35px; height: 35px; background: #111; border: 1px solid #444; cursor: pointer;
+    transition: 0.1s;
 }
+.dano-box:hover { border-color: #fff; transform: scale(1.1); }
+.box-fisico.filled { background: #ff0055; border-color: #ff0055; box-shadow: 0 0 10px #ff0055; }
+.box-stun.filled { background: #0055ff; border-color: #0055ff; box-shadow: 0 0 10px #0055ff; }
 
-.box-fisico.filled { 
-    background-color: var(--neon-pink); 
-    box-shadow: 0 0 10px var(--neon-pink); 
-    border-color: var(--neon-pink); 
-}
-.box-stun.filled { 
-    background-color: #0055ff; 
-    box-shadow: 0 0 10px #0055ff; 
-    border-color: #0055ff; 
-}
-
-/* --- ATRIBUTOS --- */
+/* --- GRIDS --- */
 .atributos-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-    gap: 15px; margin-bottom: 40px;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 15px;
 }
-
 .attr-box {
-    background: #080808; 
-    border: 1px solid #333;
-    padding: 15px 5px; text-align: center;
-    transition: 0.3s;
-    clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px); /* Canto cortado */
+    background: #0a0a0a; border: 1px solid #333; padding: 15px 5px; text-align: center;
+    cursor: pointer; transition: 0.2s;
 }
-.attr-box:hover { 
-    border-color: var(--neon-cyan); 
-    box-shadow: inset 0 0 15px rgba(0, 243, 255, 0.2); 
-    transform: translateY(-5px);
-}
-.attr-val { font-size: 2em; font-weight: bold; color: #fff; text-shadow: 0 0 5px rgba(255,255,255,0.5); }
-.attr-label { font-size: 0.7em; color: var(--neon-cyan); margin-top: 5px; letter-spacing: 1px; }
+.attr-box:hover { border-color: var(--neon-cyan); background: #111; transform: translateY(-3px); }
+.attr-val { font-size: 2em; color: var(--neon-cyan); font-weight: bold; }
+.attr-label { color: #666; font-size: 0.7em; margin-top: 5px; }
 
-/* --- LISTAS E BOTÕES --- */
-.section-title { 
-    color: #fff; border-bottom: 2px solid var(--neon-cyan); 
-    padding-bottom: 10px; margin-bottom: 20px; 
-    display: inline-block; padding-right: 50px;
+/* --- LISTAS (Armas, Perícias, Itens) --- */
+.item-row {
+    background: #0a0a0a; border-left: 3px solid #333; padding: 15px; margin-bottom: 10px;
+    display: flex; justify-content: space-between; align-items: center; transition: 0.2s;
 }
+.item-row:hover { border-left-color: var(--neon-cyan); background: #111; }
 
-.pericia-item {
-    background: linear-gradient(90deg, #111 0%, transparent 100%);
-    margin-bottom: 10px; padding: 15px;
-    display: flex; justify-content: space-between; align-items: center;
-    border-left: 3px solid #333; transition: 0.2s;
-}
-.pericia-item:hover { border-left-color: var(--neon-pink); background: #1a1a1a; }
+.item-name { font-size: 1.1em; font-weight: bold; color: #eee; }
+.item-meta { font-size: 0.8em; color: #666; margin-top: 2px; }
+.item-highlight { color: var(--neon-pink); }
 
-.btn-roll {
-    background: transparent;
-    border: 1px solid var(--neon-cyan);
-    color: var(--neon-cyan);
-    padding: 8px 25px;
-    cursor: pointer;
-    font-family: inherit; font-weight: bold; text-transform: uppercase;
-    position: relative; overflow: hidden; transition: 0.3s;
-}
+/* Grid de Equipamentos (Rodapé) */
+.equip-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+.equip-col h4 { color: var(--neon-cyan); border-bottom: 1px dashed #333; padding-bottom: 5px; margin-bottom: 15px; display:flex; justify-content:space-between; }
 
-.btn-roll:hover {
-    background: var(--neon-cyan); color: #000;
-    box-shadow: 0 0 15px var(--neon-cyan);
-}
+/* Form Flutuante */
+.floating-form { display: none; background: #111; border: 1px solid var(--neon-cyan); padding: 15px; margin-bottom: 20px; }
