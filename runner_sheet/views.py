@@ -17,33 +17,49 @@ def lista_personagens(request):
     return render(request, 'runner_sheet/home.html', {'runners': runners})
 
 def criar_personagem(request):
-    """Cria personagem e define atributos iniciais + cálculo de vida"""
     if request.method == 'POST':
         form = PersonagemForm(request.POST, request.FILES)
         if form.is_valid():
-            personagem = form.save()
+            personagem = form.save() # Salva o básico (nome, metatipo)
             
-            # ATUALIZA OS ATRIBUTOS COM O QUE O USUÁRIO DIGITOU
-            # O Signal já criou os atributos com valor 1, agora vamos atualizar.
-            mapa_campos = {
-                'Corpo': form.cleaned_data['val_corpo'],
-                'Agilidade': form.cleaned_data['val_agilidade'],
-                'Reação': form.cleaned_data['val_reacao'],
-                'Força': form.cleaned_data['val_forca'],
-                'Vontade': form.cleaned_data['val_vontade'],
-                'Lógica': form.cleaned_data['val_logica'],
-                'Intuição': form.cleaned_data['val_intuicao'],
-                'Carisma': form.cleaned_data['val_carisma'],
+            # --- 1. SALVAR ATRIBUTOS ---
+            # O Signal já criou os atributos com valor 1. Vamos atualizar.
+            mapa_attrs = {
+                'Corpo': form.cleaned_data['attr_corpo'],
+                'Agilidade': form.cleaned_data['attr_agilidade'],
+                'Reação': form.cleaned_data['attr_reacao'],
+                'Força': form.cleaned_data['attr_forca'],
+                'Vontade': form.cleaned_data['attr_vontade'],
+                'Lógica': form.cleaned_data['attr_logica'],
+                'Intuição': form.cleaned_data['attr_intuicao'],
+                'Carisma': form.cleaned_data['attr_carisma'],
+                'Trunfo': form.cleaned_data['attr_trunfo'],
+                'Mágica': form.cleaned_data['attr_magia'],
             }
             
-            for nome_attr, valor in mapa_campos.items():
-                attr = personagem.atributos.get(nome=nome_attr)
-                attr.valor = valor
-                attr.save()
+            for nome, valor in mapa_attrs.items():
+                if valor: # Se tiver valor (magia pode ser 0)
+                    try:
+                        attr = personagem.atributos.get(nome=nome)
+                        attr.valor = int(valor)
+                        attr.save()
+                    except:
+                        pass
+
+            # --- 2. SALVAR PERÍCIAS ---
+            # Loop pelos 4 slots do formulário
+            for i in range(1, 5):
+                nome_skill = form.cleaned_data.get(f'skill_{i}')
+                val_skill = form.cleaned_data.get(f'skill_val_{i}')
+                
+                if nome_skill and val_skill and int(val_skill) > 0:
+                    Pericia.objects.create(
+                        personagem=personagem,
+                        nome=nome_skill,
+                        pontos=int(val_skill)
+                    )
             
-            # CÁLCULO AUTOMÁTICO DE VIDA (FISICO E STUN)
-            personagem.recalcular_monitores()
-            
+            personagem.recalcular_stats()
             return redirect('ficha_detalhe', pk=personagem.pk)
     else:
         form = PersonagemForm()
